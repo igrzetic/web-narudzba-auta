@@ -1,18 +1,35 @@
+import { createRouter, createWebHistory } from "vue-router";
+import MainLayout from "layouts/MainLayout.vue";
+import NarudzbePage from "pages/NarudzbePage.vue";
+import VozilaPage from "pages/VozilaPage.vue";
+import KupciPage from "pages/KupciPage.vue";
+import RacuniPage from "pages/RacuniPage.vue";
+import DjelatniciPage from "pages/DjelatniciPage.vue";
+
 const routes = [
   {
-    path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    path: "/",
+    component: MainLayout,
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
+      { path: "narudzbe", component: NarudzbePage },
+      { path: "vozila", component: VozilaPage },
+      { path: "kupci", component: KupciPage },
+      { path: "racuni", component: RacuniPage },
+      { path: "djelatnici", component: DjelatniciPage },
+    ],
   },
 
   // Always leave this as last one,
   // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
-]
+    path: "/:catchAll(.*)*",
+    component: () => import("pages/ErrorNotFound.vue"),
+  },
+];
 
-export default routes
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;

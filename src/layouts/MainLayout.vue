@@ -11,25 +11,13 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title> Web narudžba auta </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+        <q-item-label header> Izbornik </q-item-label>
 
         <EssentialLink
           v-for="link in linksList"
@@ -46,61 +34,49 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { ref } from "vue";
+import EssentialLink from "components/EssentialLink.vue";
 
 defineOptions({
-  name: 'MainLayout'
-})
+  name: "MainLayout",
+});
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: "Narudžbe",
+    caption: "kreiranje / pregled narudžbi",
+    icon: "add_shopping_cart",
+    link: "/narudzbe",
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: "Vozila",
+    caption: "pregled / izmjena vozila",
+    icon: "directions_car",
+    link: "/vozila",
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: "Kupci",
+    caption: "dodavanje / izmjena kupaca",
+    icon: "group",
+    link: "/kupci",
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: "Računi",
+    caption: "generiranje / pregled računa",
+    icon: "receipt",
+    link: "/racuni",
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
+    title: "Djelatnik",
+    caption: "log out",
+    icon: "account_circle",
+    link: "/djelatnici",
   },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+];
 
-const leftDrawerOpen = ref(false)
+const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
