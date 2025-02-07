@@ -1,5 +1,60 @@
 <template>
   <q-page class="q-pa-md">
+    <h4>Dodaj novog djelatnika</h4>
+    <q-form ref="formRef" @submit.prevent="spremiDjelatnika">
+      <div class="q-gutter-md">
+        <q-input
+          v-model="imeFormatted"
+          label="Ime djelatnika"
+          outlined
+          :rules="[(val) => !!val || 'Ime je obavezno']"
+        />
+        <q-input
+          v-model="prezimeFormatted"
+          label="Prezime djelatnika"
+          outlined
+          :rules="[(val) => !!val || 'Prezime je obavezno']"
+        />
+        <q-input
+          v-model="noviDjelatnik.korisnickoIme"
+          label="Korisničko ime"
+          outlined
+          :rules="[(val) => !!val || 'Korisničko ime je obavezno']"
+        />
+        <q-input
+          v-model="noviDjelatnik.lozinka"
+          label="Lozinka"
+          outlined
+          type="password"
+          :rules="[(val) => !!val || 'Lozinka je obavezna']"
+        />
+      </div>
+
+      <q-btn
+        type="submit"
+        label="Spremi"
+        color="primary"
+        class="q-mt-md"
+        :disable="!validacija()"
+      />
+      <q-btn
+        label="Ažuriraj"
+        color="secondary"
+        class="q-mt-md"
+        @click="azurirajDjelatnika"
+        :disable="!odabraniRedak"
+      />
+      <q-btn
+        label="Obriši"
+        color="secondary"
+        class="q-mt-md"
+        @click="obrisiDjelatnika"
+        :disable="!odabraniRedak"
+      />
+    </q-form>
+
+    <q-separator class="q-my-md" />
+
     <q-btn
       :label="prikaz ? 'Sakrij djelatnike' : 'Prikaži djelatnike'"
       class="q-mb-md"
@@ -12,8 +67,9 @@
       title="Djelatnici"
       :rows="djelatnici"
       :columns="columns"
-      row-key="id"
+      row-key="IdDjelatnika"
       v-show="prikaz"
+      @row-click="odaberiRedak"
     />
     <p v-if="prikaz && djelatnici.length === 0">Nema podataka za prikaz.</p>
 
@@ -28,12 +84,56 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import api from "src/api";
+import { useQuasar } from "quasar";
 
 const djelatnici = ref([]);
 const prikaz = ref(false);
+const $q = useQuasar();
+const odabraniRedak = ref(null);
 
+// Novi djelatnik
+const noviDjelatnik = ref({
+  ime: "",
+  prezime: "",
+  korisnickoIme: "",
+  lozinka: "",
+});
+
+const imeFormatted = computed({
+  get: () => noviDjelatnik.value.ime,
+  set: (value) => (noviDjelatnik.value.ime = capitalizeFirstLetter(value)),
+});
+
+const prezimeFormatted = computed({
+  get: () => noviDjelatnik.value.prezime,
+  set: (value) => (noviDjelatnik.value.prezime = capitalizeFirstLetter(value)),
+});
+
+// Funkcija za kapitalizaciju prvog slova
+const capitalizeFirstLetter = (value) => {
+  if (!value) return "";
+  return value.charAt(0).toUpperCase() + value.slice(1);
+};
+
+// Funkcija za prikaz tablice
+const prikaziTablicu = () => {
+  prikaz.value = !prikaz.value;
+  if (prikaz.value) {
+    ucitajTablicu();
+  }
+};
+
+// Funkcija za označavanje redaka
+// const oznaciRedak = (row) => {
+//   return odabraniRedak.value &&
+//     odabraniRedak.value.IdDjelatnika === row.IdDjelatnika
+//     ? "odabrani-redak"
+//     : "";
+// };
+
+// Definicija kolona za tablicu
 const columns = [
   {
     name: "IdDjelatnika",
@@ -72,30 +172,158 @@ const columns = [
   },
 ];
 
-// Funkcija koja dohvaća podatke
+// Funkcija za validaciju inputa
+const validacija = () => {
+  return (
+    noviDjelatnik.value.ime &&
+    noviDjelatnik.value.prezime &&
+    noviDjelatnik.value.korisnickoIme &&
+    noviDjelatnik.value.lozinka
+  );
+};
+
+// Funkcija za učitavanje podataka iz baze
 const ucitajTablicu = async () => {
   try {
     const response = await api.getDjelatnici(); // API poziv
-    console.log("Api response: ", response.data);
 
     djelatnici.value = response.data;
-
-    console.log(
-      "Prvi objekt u nizu djelatnici.value: ",
-      djelatnici.value.length > 0 ? djelatnici.value[0] : "Nema podataka"
-    );
   } catch (error) {
-    console.error("Greška pri dohvaćanju narudžbi: ", error);
+    console.error("Greška pri dohvaćanju djelatnika: ", error);
+    $q.notify({
+      type: "negative",
+      message: "Greška pri dohvaćanju djelatnika.",
+    });
   }
 };
 
-// Toggle funkcija za tablicu
-const prikaziTablicu = () => {
-  prikaz.value = !prikaz.value;
-  if (prikaz.value) {
+// Funkcija za spremanje novog djelatnika
+const formRef = ref(null);
+
+const spremiDjelatnika = async () => {
+  if (!validacija()) {
+    $q.notify({ type: "warning", message: "Sva polja moraju biti popunjena!" });
+    return;
+  }
+
+  try {
+    await api.createDjelatnik({
+      ImeDjelatnika: noviDjelatnik.value.ime,
+      PrezimeDjelatnika: noviDjelatnik.value.prezime,
+      korisnickoIme: noviDjelatnik.value.korisnickoIme,
+      lozinka: noviDjelatnik.value.lozinka,
+    });
+
+    $q.notify({ type: "positive", message: "Djelatnik uspješno spremljen!" });
+
+    // Resetiranje forme
+    noviDjelatnik.value = {
+      ime: "",
+      prezime: "",
+      korisnickoIme: "",
+      lozinka: "",
+    };
+
+    formRef.value.resetValidation(); // Resetiraj validaciju forme
+
+    // Osvježi tablicu
     ucitajTablicu();
+  } catch (error) {
+    console.error("Greška pri spremanju djelatnika: ", error);
+    $q.notify({
+      type: "negative",
+      message: "Greška pri spremanju djelatnika!",
+    });
   }
 };
 
+// Funkcija za odabir retka
+const odaberiRedak = (event, row) => {
+  // console.log("Odabran redak: ", row);
+  odabraniRedak.value = row;
+
+  // Popunjavanje inputa podacima iz reda
+  noviDjelatnik.value = {
+    ime: row.ImeDjelatnika,
+    prezime: row.PrezimeDjelatnika,
+    korisnickoIme: row.korisnickoIme,
+    lozinka: row.lozinka,
+  };
+};
+
+// Ažuriranje djelatnika
+const azurirajDjelatnika = async () => {
+  if (!odabraniRedak.value) {
+    $q.notify({
+      type: "warning",
+      message: "Odaberite djelatnika za ažuriranje!",
+    });
+    return;
+  }
+
+  try {
+    await api.updateDjelatnik(odabraniRedak.value.IdDjelatnika, {
+      ImeDjelatnika: noviDjelatnik.value.ime,
+      PrezimeDjelatnika: noviDjelatnik.value.prezime,
+      korisnickoIme: noviDjelatnik.value.korisnickoIme,
+      lozinka: noviDjelatnik.value.lozinka,
+    });
+
+    $q.notify({ type: "positive", message: "Djelatnik uspješno ažuriran!" });
+    ucitajTablicu();
+    odabraniRedak.value = null;
+    noviDjelatnik.value = {
+      ime: "",
+      prezime: "",
+      korisnickoIme: "",
+      lozinka: "",
+    };
+  } catch (error) {
+    console.error("Greška pri ažuriranju djelatnika: ", error);
+    $q.notify({
+      type: "negative",
+      message: "Greška pri ažuriranju djelatnika!",
+    });
+  }
+};
+
+// Brisanje djelatnika
+const obrisiDjelatnika = async () => {
+  if (!odabraniRedak.value) {
+    $q.notify({
+      type: "warning",
+      message: "Odaberite djelatnika za brisanje!",
+    });
+    return;
+  }
+
+  $q.dialog({
+    title: "Potvrda",
+    message: "Jeste li sigurni da želite obrisati ovog djelatnika?",
+    cancel: true,
+    persistent: true,
+  }).onOk(async () => {
+    try {
+      await api.deleteDjelatnik(odabraniRedak.value.IdDjelatnika);
+      $q.notify({ type: "positive", message: "Djelatnik uspješno obrisan!" });
+      ucitajTablicu();
+      odaberiRedak.value = null;
+    } catch (error) {
+      console.error("Greška pri brisanju djelatnika: ", error);
+      $q.notify({
+        type: "negative",
+        message: "Greška pri brisanju djelatnika!",
+      });
+    }
+  });
+};
+
+// Učitaj tablicu kada se komponenta montira
 onMounted(ucitajTablicu);
 </script>
+
+<style>
+.odabrani-redak {
+  background-color: green !important;
+}
+</style>
