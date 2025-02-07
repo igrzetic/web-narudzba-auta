@@ -125,14 +125,6 @@ const prikaziTablicu = () => {
   }
 };
 
-// Funkcija za označavanje redaka
-// const oznaciRedak = (row) => {
-//   return odabraniRedak.value &&
-//     odabraniRedak.value.IdDjelatnika === row.IdDjelatnika
-//     ? "odabrani-redak"
-//     : "";
-// };
-
 // Definicija kolona za tablicu
 const columns = [
   {
@@ -239,7 +231,6 @@ const spremiDjelatnika = async () => {
 
 // Funkcija za odabir retka
 const odaberiRedak = (event, row) => {
-  // console.log("Odabran redak: ", row);
   odabraniRedak.value = row;
 
   // Popunjavanje inputa podacima iz reda
@@ -321,9 +312,3 @@ const obrisiDjelatnika = async () => {
 // Učitaj tablicu kada se komponenta montira
 onMounted(ucitajTablicu);
 </script>
-
-<style>
-.odabrani-redak {
-  background-color: green !important;
-}
-</style>
