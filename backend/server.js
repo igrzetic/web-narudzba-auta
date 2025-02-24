@@ -128,6 +128,113 @@ app.delete("/api/narudzbe/:id", (req, res) => {
   );
 });
 
+// === CRUD operacije za Vozilo_oot === //
+
+// Dohvati sva vozila
+app.get("/api/vozila", (req, res) => {
+  db.query("SELECT * FROM Vozilo_oot", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Dohvati jedno vozilo po ID-u
+app.get("/api/vozila/:id", (req, res) => {
+  db.query(
+    "SELECT * FROM Vozilo_oot WHERE BrojSasije = ?",
+    [req.params.id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0)
+        return res.status(404).json({ error: "Vozilo nije pronađeno" });
+      res.json(results[0]);
+    }
+  );
+});
+
+// Dodaj novo vozilo
+app.post("/api/vozila", (req, res) => {
+  const {
+    BrojSasije,
+    Marka,
+    Model,
+    Paket,
+    Boja,
+    Felge,
+    Motor,
+    VrstaGoriva,
+    VrstaPogona,
+  } = req.body;
+  db.query(
+    "INSERT INTO Vozilo_oot (BrojSasije, Marka, Model, Paket, Boja, Felge, Motor, VrstaGoriva, VrstaPogona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      BrojSasije,
+      Marka,
+      Model,
+      Paket,
+      Boja,
+      Felge,
+      Motor,
+      VrstaGoriva,
+      VrstaPogona,
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Vozilo dodano", id: results.insertId });
+    }
+  );
+});
+
+// Ažuriraj postojeće vozilo
+app.put("/api/vozila/:id", (req, res) => {
+  const {
+    BrojSasije,
+    Marka,
+    Model,
+    Paket,
+    Boja,
+    Felge,
+    Motor,
+    VrstaGoriva,
+    VrstaPogona,
+  } = req.body;
+  db.query(
+    "UPDATE Vozilo_oot SET Marka = ?, Model = ?, Paket = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ? WHERE BrojSasije = ?",
+    [
+      BrojSasije,
+      Marka,
+      Model,
+      Paket,
+      Boja,
+      Felge,
+      Motor,
+      VrstaGoriva,
+      VrstaPogona,
+      req.params.id,
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0)
+        return res.status(404).json({ error: "Vozilo nije pronađeno" });
+      res.json({ message: "Vozilo ažurirano" });
+    }
+  );
+});
+
+// Obriši vozilo
+app.delete("/api/vozila/:id", (req, res) => {
+  db.query(
+    "DELETE FROM Vozilo_oot WHERE BrojSasije = ?",
+    [req.params.id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0)
+        return res.status(404).json({ error: "Vozilo nije pronađeno" });
+      res.json({ message: "Vozilo obrisano" });
+    }
+  );
+});
+
 // === CRUD operacije za Djelatnik_oot === //
 
 // Dohvati sve djelatnike

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api", // Zahvaljujući proxy postavci u quasar.config.js
+  baseURL: "/api",
 });
 
 export default {
@@ -30,6 +30,34 @@ export default {
   deleteNarudzba(id) {
     return api.delete(`/narudzbe/${id}`);
   },
+  // ---------------------------------------------------------
+
+  // TABLICA VOZILA
+  // Dohvati sva vozila
+  getVozila() {
+    return api.get("/vozila");
+  },
+
+  // Dohvati jedno vozilo po ID-u
+  getVozilo(id) {
+    return api.get(`/vozila/${id}`);
+  },
+
+  // Dodaj novo vozilo
+  createVozilo(vozilo) {
+    return api.post("/vozila", vozilo);
+  },
+
+  // Ažuriraj postojeće vozilo
+  updateVozilo(id, vozilo) {
+    return api.put(`/vozila/${id}`, vozilo);
+  },
+
+  // Obriši narudžbu
+  deleteVozilo(id) {
+    return api.delete(`/vozilo/${id}`);
+  },
+  // ---------------------------------------------------------
 
   // TABLICA DJELATNIK
   // Dohvati sve djelatnike
@@ -56,4 +84,5 @@ export default {
   deleteDjelatnik(id) {
     return api.delete(`/djelatnici/${id}`);
   },
+  // ---------------------------------------------------------
 };

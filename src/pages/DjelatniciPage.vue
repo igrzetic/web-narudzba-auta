@@ -1,61 +1,71 @@
 <template>
   <q-page class="q-pa-md">
     <h4>Dodaj novog djelatnika</h4>
-    <q-form ref="formRef" @submit.prevent="spremiDjelatnika">
+    <q-form ref="formRef" @submit.prevent="spremi">
       <div class="q-gutter-md">
         <q-input
           v-model="imeFormatted"
+          style="width: 30%"
           label="Ime djelatnika"
           outlined
-          :rules="[(val) => !!val || 'Ime je obavezno']"
+          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-input
           v-model="prezimeFormatted"
+          style="width: 30%"
           label="Prezime djelatnika"
           outlined
-          :rules="[(val) => !!val || 'Prezime je obavezno']"
+          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-input
           v-model="noviDjelatnik.korisnickoIme"
+          style="width: 30%"
           label="Korisničko ime"
           outlined
-          :rules="[(val) => !!val || 'Korisničko ime je obavezno']"
+          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-input
           v-model="noviDjelatnik.lozinka"
+          style="width: 30%"
           label="Lozinka"
           outlined
           type="password"
-          :rules="[(val) => !!val || 'Lozinka je obavezna']"
+          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
       </div>
 
-      <q-btn
-        type="submit"
-        label="Spremi"
-        color="primary"
-        class="q-mt-md"
-        :disable="!validacija()"
-      />
-      <q-btn
-        label="Ažuriraj"
-        color="secondary"
-        class="q-mt-md"
-        @click="azurirajDjelatnika"
-        :disable="!odabraniRedak"
-      />
-      <q-btn
-        label="Obriši"
-        color="secondary"
-        class="q-mt-md"
-        @click="obrisiDjelatnika"
-        :disable="!odabraniRedak"
-      />
+      <div class="row q-gutter-x-md">
+        <q-btn
+          push
+          type="submit"
+          label="Spremi"
+          color="primary"
+          class="q-mt-md"
+          :disable="!validacija()"
+        />
+        <q-btn
+          push
+          label="Ažuriraj"
+          color="secondary"
+          class="q-mt-md"
+          @click="azuriraj"
+          :disable="!odabraniRedak"
+        />
+        <q-btn
+          push
+          label="Obriši"
+          color="secondary"
+          class="q-mt-md"
+          @click="obrisi"
+          :disable="!odabraniRedak"
+        />
+      </div>
     </q-form>
 
     <q-separator class="q-my-md" />
 
     <q-btn
+      push
       :label="prikaz ? 'Sakrij djelatnike' : 'Prikaži djelatnike'"
       class="q-mb-md"
       color="primary"
@@ -70,15 +80,16 @@
       row-key="IdDjelatnika"
       v-show="prikaz"
       @row-click="odaberiRedak"
+      style="width: 85%; margin: 20px auto"
     />
     <p v-if="prikaz && djelatnici.length === 0">Nema podataka za prikaz.</p>
 
     <q-btn
+      push
       v-show="prikaz"
       @click="ucitajTablicu"
       label="Osvježi"
       color="primary"
-      class="q-mt-md"
     />
   </q-page>
 </template>
@@ -192,7 +203,7 @@ const ucitajTablicu = async () => {
 // Funkcija za spremanje novog djelatnika
 const formRef = ref(null);
 
-const spremiDjelatnika = async () => {
+const spremi = async () => {
   if (!validacija()) {
     $q.notify({ type: "warning", message: "Sva polja moraju biti popunjena!" });
     return;
@@ -243,7 +254,7 @@ const odaberiRedak = (event, row) => {
 };
 
 // Ažuriranje djelatnika
-const azurirajDjelatnika = async () => {
+const azuriraj = async () => {
   if (!odabraniRedak.value) {
     $q.notify({
       type: "warning",
@@ -279,7 +290,7 @@ const azurirajDjelatnika = async () => {
 };
 
 // Brisanje djelatnika
-const obrisiDjelatnika = async () => {
+const obrisi = async () => {
   if (!odabraniRedak.value) {
     $q.notify({
       type: "warning",
