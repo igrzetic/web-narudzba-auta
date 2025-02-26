@@ -24,11 +24,6 @@ db.connect((err) => {
   console.log("Connected to database");
 });
 
-// Test ruta
-app.get("/", (req, res) => {
-  res.send("Backend is running...");
-});
-
 // === CRUD operacije za Narudzba_oot === //
 
 // Dohvati sve narudžbe
@@ -39,20 +34,6 @@ app.get("/api/narudzbe", (req, res) => {
   });
 });
 
-// Dohvati jednu narudžbu po ID-u
-app.get("/api/narudzbe/:id", (req, res) => {
-  db.query(
-    "SELECT * FROM Narudzba_oot WHERE BrojNarudzbe = ?",
-    [req.params.id],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (results.length === 0)
-        return res.status(404).json({ error: "Narudžba nije pronađena" });
-      res.json(results[0]);
-    }
-  );
-});
-
 // Dodaj novu narudžbu
 app.post("/api/narudzbe", (req, res) => {
   const {
@@ -60,18 +41,18 @@ app.post("/api/narudzbe", (req, res) => {
     VoziloNaNarudzbi,
     Kolicina,
     Cijena,
-    IdKupca,
+    id,
     BrojSasije,
     IdDjelatnika,
   } = req.body;
   db.query(
-    "INSERT INTO Narudzba_oot (DatumNarudzbe, VoziloNaNarudzbi, Kolicina, Cijena, IdKupca, BrojSasije, IdDjelatnika) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Narudzba_oot (DatumNarudzbe, VoziloNaNarudzbi, Kolicina, Cijena, id, BrojSasije, IdDjelatnika) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [
       DatumNarudzbe,
       VoziloNaNarudzbi,
       Kolicina,
       Cijena,
-      IdKupca,
+      id,
       BrojSasije,
       IdDjelatnika,
     ],
@@ -89,18 +70,18 @@ app.put("/api/narudzbe/:id", (req, res) => {
     VoziloNaNarudzbi,
     Kolicina,
     Cijena,
-    IdKupca,
+    id,
     BrojSasije,
     IdDjelatnika,
   } = req.body;
   db.query(
-    "UPDATE Narudzba_oot SET DatumNarudzbe = ?, VoziloNaNarudzbi = ?, Kolicina = ?, Cijena = ?, IdKupca = ?, BrojSasije = ?, IdDjelatnika = ? WHERE BrojNarudzbe = ?",
+    "UPDATE Narudzba_oot SET DatumNarudzbe = ?, VoziloNaNarudzbi = ?, Kolicina = ?, Cijena = ?, id = ?, BrojSasije = ?, IdDjelatnika = ? WHERE BrojNarudzbe = ?",
     [
       DatumNarudzbe,
       VoziloNaNarudzbi,
       Kolicina,
       Cijena,
-      IdKupca,
+      id,
       BrojSasije,
       IdDjelatnika,
       req.params.id,
@@ -138,45 +119,33 @@ app.get("/api/vozila", (req, res) => {
   });
 });
 
-// Dohvati jedno vozilo po ID-u
-app.get("/api/vozila/:id", (req, res) => {
-  db.query(
-    "SELECT * FROM Vozilo_oot WHERE BrojSasije = ?",
-    [req.params.id],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (results.length === 0)
-        return res.status(404).json({ error: "Vozilo nije pronađeno" });
-      res.json(results[0]);
-    }
-  );
-});
-
 // Dodaj novo vozilo
 app.post("/api/vozila", (req, res) => {
   const {
     BrojSasije,
     Marka,
     Model,
-    Paket,
+    Oprema,
     Boja,
     Felge,
     Motor,
     VrstaGoriva,
     VrstaPogona,
+    Cijena,
   } = req.body;
   db.query(
-    "INSERT INTO Vozilo_oot (BrojSasije, Marka, Model, Paket, Boja, Felge, Motor, VrstaGoriva, VrstaPogona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Vozilo_oot (BrojSasije, Marka, Model, Oprema, Boja, Felge, Motor, VrstaGoriva, VrstaPogona, Cijena) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       BrojSasije,
       Marka,
       Model,
-      Paket,
+      Oprema,
       Boja,
       Felge,
       Motor,
       VrstaGoriva,
       VrstaPogona,
+      Cijena,
     ],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -191,26 +160,28 @@ app.put("/api/vozila/:id", (req, res) => {
     BrojSasije,
     Marka,
     Model,
-    Paket,
+    Oprema,
     Boja,
     Felge,
     Motor,
     VrstaGoriva,
     VrstaPogona,
+    Cijena,
   } = req.body;
   db.query(
-    "UPDATE Vozilo_oot SET Marka = ?, Model = ?, Paket = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ? WHERE BrojSasije = ?",
+    "UPDATE Vozilo_oot SET BrojSasije = ?, Marka = ?, Model = ?, Oprema = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ?, Cijena = ? WHERE BrojSasije = ?",
     [
-      BrojSasije,
-      Marka,
-      Model,
-      Paket,
-      Boja,
-      Felge,
-      Motor,
-      VrstaGoriva,
-      VrstaPogona,
-      req.params.id,
+      BrojSasije, // Novi BrojSasije
+      Marka, // Nova Marka
+      Model, // Novi Model
+      Oprema, // Nova oprema
+      Boja, // Nova Boja
+      Felge, // Nove Felge
+      Motor, // Novi Motor
+      VrstaGoriva, // Nova VrstaGoriva
+      VrstaPogona, // Nova VrstaPogona
+      Cijena,
+      req.params.id, // Identifikator koji je poslan u URL-u
     ],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -235,6 +206,84 @@ app.delete("/api/vozila/:id", (req, res) => {
   );
 });
 
+// === CRUD operacije za Kupac_oot === //
+
+// Dohvati sve kupce
+app.get("/api/kupci", (req, res) => {
+  db.query("SELECT * FROM Kupac_oot", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Dodaj novog kupca
+app.post("/api/kupci", (req, res) => {
+  const {
+    OIB,
+    ImeKupca,
+    PrezimeKupca,
+    AdresaKupca,
+    Email,
+    BrojTelefona,
+    TipKupca,
+  } = req.body;
+  db.query(
+    "INSERT INTO Kupac_oot (OIB, ImeKupca, PrezimeKupca, AdresaKupca, Email, BrojTelefona, TipKupca) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [OIB, ImeKupca, PrezimeKupca, AdresaKupca, Email, BrojTelefona, TipKupca],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Kupac dodan", id: results.insertId });
+    }
+  );
+});
+
+// Ažuriraj postojećeg kupca
+app.put("/api/kupci/:id", (req, res) => {
+  const {
+    OIB,
+    ImeKupca,
+    PrezimeKupca,
+    AdresaKupca,
+    Email,
+    BrojTelefona,
+    TipKupca,
+  } = req.body;
+
+  db.query(
+    "UPDATE Kupac_oot SET OIB = ?, ImeKupca = ?, PrezimeKupca = ?, AdresaKupca = ?, Email = ?, BrojTelefona = ?, TipKupca = ? WHERE IdKupca = ?",
+    [
+      OIB, // Novi OIB
+      ImeKupca, // Novi ImeKupca
+      PrezimeKupca, // Novi PrezimeKupca
+      AdresaKupca, // Novi AdresaKupca
+      Email, // Novi Email
+      BrojTelefona, // Novi BrojTelefona
+      TipKupca, // Novi TipKupca
+      req.params.id, // Identifikator koji je poslan u URL-u
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0)
+        return res.status(404).json({ error: "Kupac nije pronađen" });
+      res.json({ message: "Kupac ažuriran" });
+    }
+  );
+});
+
+// Obriši kupca
+app.delete("/api/kupci/:id", (req, res) => {
+  db.query(
+    "DELETE FROM Kupac_oot WHERE IdKupca = ?",
+    [req.params.id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0)
+        return res.status(404).json({ error: "Kupac nije pronađen" });
+      res.json({ message: "Kupac obrisan" });
+    }
+  );
+});
+
 // === CRUD operacije za Djelatnik_oot === //
 
 // Dohvati sve djelatnike
@@ -243,20 +292,6 @@ app.get("/api/djelatnici", (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
-});
-
-// Dohvati jednog djelatnika po ID-u
-app.get("/api/djelatnici/:id", (req, res) => {
-  db.query(
-    "SELECT * FROM Djelatnik_oot WHERE IdDjelatnika = ?",
-    [req.params.id],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (results.length === 0)
-        return res.status(404).json({ error: "Djelatnik nije pronađen" });
-      res.json(results[0]);
-    }
-  );
 });
 
 // Dodaj novog djelatnika

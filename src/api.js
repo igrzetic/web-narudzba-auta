@@ -11,11 +11,6 @@ export default {
     return api.get("/narudzbe");
   },
 
-  // Dohvati jednu narudžbu po ID-u
-  getNarudzba(id) {
-    return api.get(`/narudzbe/${id}`);
-  },
-
   // Dodaj novu narudžbu
   createNarudzba(narudzba) {
     return api.post("/narudzbe", narudzba);
@@ -38,11 +33,6 @@ export default {
     return api.get("/vozila");
   },
 
-  // Dohvati jedno vozilo po ID-u
-  getVozilo(id) {
-    return api.get(`/vozila/${id}`);
-  },
-
   // Dodaj novo vozilo
   createVozilo(vozilo) {
     return api.post("/vozila", vozilo);
@@ -50,12 +40,91 @@ export default {
 
   // Ažuriraj postojeće vozilo
   updateVozilo(id, vozilo) {
-    return api.put(`/vozila/${id}`, vozilo);
+    console.log("Podaci za slanje: ", vozilo);
+    return api
+      .put(`/vozila/${id}`, vozilo)
+      .then((response) => console.log("Uspjeh: ", response))
+      .catch((error) => {
+        console.error("Greška: ", error);
+        if (error.response) {
+          // Ako server vrati odgovor (greška sa status kodom)
+          console.error("Podaci odgovora servera: ", error.response.data);
+          console.error("Status kod: ", error.response.status);
+          console.error("Glavni razlog greške: ", error.response.statusText);
+        } else if (error.request) {
+          // Ako nije bilo odgovora od servera
+          console.error("Nema odgovora od servera: ", error.request);
+        } else {
+          // Greška u postavkama zahtjeva
+          console.error("Greška u postavkama zahtjeva: ", error.message);
+        }
+      });
   },
 
-  // Obriši narudžbu
+  // Obriši vozilo
   deleteVozilo(id) {
-    return api.delete(`/vozilo/${id}`);
+    return api.delete(`/vozila/${id}`);
+  },
+  // ---------------------------------------------------------
+
+  // TABLICA KUPCI
+  // Dohvati sve kupce
+  getKupci() {
+    return api.get("/kupci");
+  },
+
+  // Dodaj novog kupca
+  createKupac(kupac) {
+    return api
+      .post("/kupci", kupac)
+      .then((response) => console.log("Uspjeh: ", response))
+      .catch((error) => {
+        console.error("Greška: ", error);
+        if (error.response) {
+          // Ako server vrati odgovor (greška sa status kodom)
+          console.error("Podaci odgovora servera: ", error.response.data);
+          console.error("Status kod: ", error.response.status);
+          console.error("Glavni razlog greške: ", error.response.statusText);
+        } else if (error.request) {
+          // Ako nije bilo odgovora od servera
+          console.error("Nema odgovora od servera: ", error.request);
+        } else {
+          // Greška u postavkama zahtjeva
+          console.error("Greška u postavkama zahtjeva: ", error.message);
+        }
+      });
+  },
+
+  // Ažuriraj postojećeg kupca
+  updateKupac(id, kupac) {
+    return api.put(`/kupci/${id}`, kupac);
+  },
+
+  // Obriši kupca
+  deleteKupac(id) {
+    return api.delete(`/kupci/${id}`);
+  },
+  // ---------------------------------------------------------
+
+  // TABLICA RACUNI
+  // Dohvati sve račune
+  getRacuni() {
+    return api.get("/racuni");
+  },
+
+  // Dodaj novi račun
+  createRacun(racun) {
+    return api.post("/racuni", racun);
+  },
+
+  // Ažuriraj postojeći račun
+  updateRacun(id, racun) {
+    return api.put(`/racuni/${id}`, racun);
+  },
+
+  // Obriši račun
+  deleteRacun(id) {
+    return api.delete(`/racuni/${id}`);
   },
   // ---------------------------------------------------------
 
@@ -63,11 +132,6 @@ export default {
   // Dohvati sve djelatnike
   getDjelatnici() {
     return api.get("/djelatnici");
-  },
-
-  // Dohvati jednog djelatnika po ID-u
-  getDjelatnik(id) {
-    return api.get(`/djelatnici/${id}`);
   },
 
   // Dodaj novog djelatnika

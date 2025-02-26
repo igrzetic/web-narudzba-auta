@@ -7,28 +7,28 @@
           v-model="imeFormatted"
           style="width: 30%"
           label="Ime djelatnika"
-          outlined
+          filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-input
           v-model="prezimeFormatted"
           style="width: 30%"
           label="Prezime djelatnika"
-          outlined
+          filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-input
           v-model="noviDjelatnik.korisnickoIme"
           style="width: 30%"
           label="Korisničko ime"
-          outlined
+          filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-input
           v-model="noviDjelatnik.lozinka"
           style="width: 30%"
           label="Lozinka"
-          outlined
+          filled
           type="password"
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
@@ -82,7 +82,6 @@
       @row-click="odaberiRedak"
       style="width: 85%; margin: 20px auto"
     />
-    <p v-if="prikaz && djelatnici.length === 0">Nema podataka za prikaz.</p>
 
     <q-btn
       push
@@ -103,6 +102,7 @@ const djelatnici = ref([]);
 const prikaz = ref(false);
 const $q = useQuasar();
 const odabraniRedak = ref(null);
+const formRef = ref(null);
 
 // Novi djelatnik
 const noviDjelatnik = ref({
@@ -189,7 +189,6 @@ const validacija = () => {
 const ucitajTablicu = async () => {
   try {
     const response = await api.getDjelatnici(); // API poziv
-
     djelatnici.value = response.data;
   } catch (error) {
     console.error("Greška pri dohvaćanju djelatnika: ", error);
@@ -201,8 +200,6 @@ const ucitajTablicu = async () => {
 };
 
 // Funkcija za spremanje novog djelatnika
-const formRef = ref(null);
-
 const spremi = async () => {
   if (!validacija()) {
     $q.notify({ type: "warning", message: "Sva polja moraju biti popunjena!" });
