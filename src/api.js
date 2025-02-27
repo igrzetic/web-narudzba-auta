@@ -13,12 +13,48 @@ export default {
 
   // Dodaj novu narudžbu
   createNarudzba(narudzba) {
-    return api.post("/narudzbe", narudzba);
+    console.log("Podaci za slanje: ", narudzba);
+    return api
+      .post("/narudzbe", narudzba)
+      .then((response) => console.log("Uspjeh: ", response))
+      .catch((error) => {
+        console.error("Greška: ", error);
+        if (error.response) {
+          // Ako server vrati odgovor (greška sa status kodom)
+          console.error("Podaci odgovora servera: ", error.response.data);
+          console.error("Status kod: ", error.response.status);
+          console.error("Glavni razlog greške: ", error.response.statusText);
+        } else if (error.request) {
+          // Ako nije bilo odgovora od servera
+          console.error("Nema odgovora od servera: ", error.request);
+        } else {
+          // Greška u postavkama zahtjeva
+          console.error("Greška u postavkama zahtjeva: ", error.message);
+        }
+      });
   },
 
   // Ažuriraj postojeću narudžbu
   updateNarudzba(id, narudzba) {
-    return api.put(`/narudzbe/${id}`, narudzba);
+    console.log("Podaci za slanje: ", narudzba);
+    return api
+      .put(`/narudzbe/${id}`, narudzba)
+      .then((response) => console.log("Uspjeh: ", response))
+      .catch((error) => {
+        console.error("Greška: ", error);
+        if (error.response) {
+          // Ako server vrati odgovor (greška sa status kodom)
+          console.error("Podaci odgovora servera: ", error.response.data);
+          console.error("Status kod: ", error.response.status);
+          console.error("Glavni razlog greške: ", error.response.statusText);
+        } else if (error.request) {
+          // Ako nije bilo odgovora od servera
+          console.error("Nema odgovora od servera: ", error.request);
+        } else {
+          // Greška u postavkama zahtjeva
+          console.error("Greška u postavkama zahtjeva: ", error.message);
+        }
+      });
   },
 
   // Obriši narudžbu
@@ -35,7 +71,25 @@ export default {
 
   // Dodaj novo vozilo
   createVozilo(vozilo) {
-    return api.post("/vozila", vozilo);
+    console.log("Podaci za slanje: ", vozilo);
+    return api
+      .post("/vozila", vozilo)
+      .then((response) => console.log("Uspjeh: ", response))
+      .catch((error) => {
+        console.error("Greška: ", error);
+        if (error.response) {
+          // Ako server vrati odgovor (greška sa status kodom)
+          console.error("Podaci odgovora servera: ", error.response.data);
+          console.error("Status kod: ", error.response.status);
+          console.error("Glavni razlog greške: ", error.response.statusText);
+        } else if (error.request) {
+          // Ako nije bilo odgovora od servera
+          console.error("Nema odgovora od servera: ", error.request);
+        } else {
+          // Greška u postavkama zahtjeva
+          console.error("Greška u postavkama zahtjeva: ", error.message);
+        }
+      });
   },
 
   // Ažuriraj postojeće vozilo
@@ -75,6 +129,7 @@ export default {
 
   // Dodaj novog kupca
   createKupac(kupac) {
+    console.log("Podaci za slanje: ", kupac);
     return api
       .post("/kupci", kupac)
       .then((response) => console.log("Uspjeh: ", response))

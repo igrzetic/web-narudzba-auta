@@ -39,6 +39,12 @@ app.post("/api/narudzbe", (req, res) => {
   const {
     DatumNarudzbe,
     VoziloNaNarudzbi,
+    Oprema,
+    Boja,
+    Felge,
+    Motor,
+    VrstaGoriva,
+    VrstaPogona,
     Kolicina,
     Cijena,
     id,
@@ -46,10 +52,16 @@ app.post("/api/narudzbe", (req, res) => {
     IdDjelatnika,
   } = req.body;
   db.query(
-    "INSERT INTO Narudzba_oot (DatumNarudzbe, VoziloNaNarudzbi, Kolicina, Cijena, id, BrojSasije, IdDjelatnika) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Narudzba_oot (DatumNarudzbe, VoziloNaNarudzbi, Oprema, Boja, Felge, Motor, VrstaGoriva, VrstaPogona, Kolicina, Cijena, id, BrojSasije, IdDjelatnika) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       DatumNarudzbe,
       VoziloNaNarudzbi,
+      Oprema,
+      Boja,
+      Felge,
+      Motor,
+      VrstaGoriva,
+      VrstaPogona,
       Kolicina,
       Cijena,
       id,
@@ -68,6 +80,12 @@ app.put("/api/narudzbe/:id", (req, res) => {
   const {
     DatumNarudzbe,
     VoziloNaNarudzbi,
+    Oprema,
+    Boja,
+    Felge,
+    Motor,
+    VrstaGoriva,
+    VrstaPogona,
     Kolicina,
     Cijena,
     id,
@@ -75,10 +93,16 @@ app.put("/api/narudzbe/:id", (req, res) => {
     IdDjelatnika,
   } = req.body;
   db.query(
-    "UPDATE Narudzba_oot SET DatumNarudzbe = ?, VoziloNaNarudzbi = ?, Kolicina = ?, Cijena = ?, id = ?, BrojSasije = ?, IdDjelatnika = ? WHERE BrojNarudzbe = ?",
+    "UPDATE Narudzba_oot SET DatumNarudzbe = ?, VoziloNaNarudzbi = ?, Oprema = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ?, Kolicina = ?, Cijena = ?, id = ?, BrojSasije = ?, IdDjelatnika = ? WHERE BrojNarudzbe = ?",
     [
       DatumNarudzbe,
       VoziloNaNarudzbi,
+      Oprema,
+      Boja,
+      Felge,
+      Motor,
+      VrstaGoriva,
+      VrstaPogona,
       Kolicina,
       Cijena,
       id,
@@ -121,32 +145,10 @@ app.get("/api/vozila", (req, res) => {
 
 // Dodaj novo vozilo
 app.post("/api/vozila", (req, res) => {
-  const {
-    BrojSasije,
-    Marka,
-    Model,
-    Oprema,
-    Boja,
-    Felge,
-    Motor,
-    VrstaGoriva,
-    VrstaPogona,
-    Cijena,
-  } = req.body;
+  const { BrojSasije, Marka, Model, Cijena } = req.body;
   db.query(
-    "INSERT INTO Vozilo_oot (BrojSasije, Marka, Model, Oprema, Boja, Felge, Motor, VrstaGoriva, VrstaPogona, Cijena) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    [
-      BrojSasije,
-      Marka,
-      Model,
-      Oprema,
-      Boja,
-      Felge,
-      Motor,
-      VrstaGoriva,
-      VrstaPogona,
-      Cijena,
-    ],
+    "INSERT INTO Vozilo_oot (BrojSasije, Marka, Model, Cijena) VALUES (?, ?, ?, ?)",
+    [BrojSasije, Marka, Model, Cijena],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: "Vozilo dodano", id: results.insertId });
@@ -156,30 +158,13 @@ app.post("/api/vozila", (req, res) => {
 
 // Ažuriraj postojeće vozilo
 app.put("/api/vozila/:id", (req, res) => {
-  const {
-    BrojSasije,
-    Marka,
-    Model,
-    Oprema,
-    Boja,
-    Felge,
-    Motor,
-    VrstaGoriva,
-    VrstaPogona,
-    Cijena,
-  } = req.body;
+  const { BrojSasije, Marka, Model, Cijena } = req.body;
   db.query(
-    "UPDATE Vozilo_oot SET BrojSasije = ?, Marka = ?, Model = ?, Oprema = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ?, Cijena = ? WHERE BrojSasije = ?",
+    "UPDATE Vozilo_oot SET BrojSasije = ?, Marka = ?, Model = ?, Cijena = ? WHERE BrojSasije = ?",
     [
       BrojSasije, // Novi BrojSasije
       Marka, // Nova Marka
       Model, // Novi Model
-      Oprema, // Nova oprema
-      Boja, // Nova Boja
-      Felge, // Nove Felge
-      Motor, // Novi Motor
-      VrstaGoriva, // Nova VrstaGoriva
-      VrstaPogona, // Nova VrstaPogona
       Cijena,
       req.params.id, // Identifikator koji je poslan u URL-u
     ],

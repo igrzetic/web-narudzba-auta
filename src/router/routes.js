@@ -8,8 +8,6 @@ import RacuniPage from "pages/RacuniPage.vue";
 import DjelatniciPage from "pages/DjelatniciPage.vue";
 
 const routes = [
-
-
   {
     path: "/",
     component: MainLayout,

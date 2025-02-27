@@ -21,13 +21,6 @@
     >
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item clickable v-ripple to="/">
-            <q-item-section avatar>
-              <q-icon name="home" />
-            </q-item-section>
-            <q-item-section>Početna</q-item-section>
-          </q-item>
-
           <q-item clickable v-ripple to="/narudzbe">
             <q-item-section avatar>
               <q-icon name="add_shopping_cart" />

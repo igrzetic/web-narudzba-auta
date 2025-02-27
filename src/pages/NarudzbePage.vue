@@ -4,30 +4,78 @@
     <q-form ref="formRef" @submit.prevent="spremi">
       <div class="q-gutter-md">
         <q-input
-          v-model="novaNarudzba.brojNarudzbe"
-          style="width: 30%"
-          label="Broj narudžbe"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="novaNarudzba.datumNarudzbe"
-          style="width: 30%"
-          label="Datum narudžbe"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
           v-model="novaNarudzba.voziloNaNarudzbi"
           style="width: 30%"
           label="Vozilo na narudžbi"
           filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
+        <q-select
+          v-model="novaNarudzba.oprema"
+          style="width: 30%"
+          label="Oprema"
+          filled
+          emit-value
+          map-options
+          :options="opremaVozila"
+          :rules="[(val) => !!val || 'Odaberite opremu vozila']"
+        />
+        <q-select
+          v-model="novaNarudzba.boja"
+          style="width: 30%"
+          label="Boja vozila"
+          filled
+          emit-value
+          map-options
+          :options="bojeVozila"
+          :rules="[(val) => !!val || 'Odaberite boju vozila']"
+        />
+        <q-select
+          v-model="novaNarudzba.felge"
+          style="width: 30%"
+          label="Felge vozila"
+          filled
+          emit-value
+          map-options
+          :options="felgeVozila"
+          :rules="[(val) => !!val || 'Odaberite felge vozila']"
+        />
+        <q-select
+          v-model="selectedGorivo"
+          style="width: 30%"
+          label="Vrsta goriva"
+          filled
+          emit-value
+          map-options
+          :options="gorivoVozila"
+          :rules="[(val) => !!val || 'Odaberite vrstu goriva']"
+        />
+        <q-select
+          v-model="selectedMotor"
+          style="width: 30%"
+          label="Motor vozila"
+          filled
+          emit-value
+          map-options
+          :options="motoriZaOdabranoGorivo"
+          :rules="[(val) => !!val || 'Odaberite motor vozila']"
+          :disable="!selectedGorivo"
+        />
+        <q-select
+          v-model="novaNarudzba.vrstaPogona"
+          style="width: 30%"
+          label="Vrsta pogona"
+          filled
+          emit-value
+          map-options
+          :options="pogonaVozila"
+          :rules="[(val) => !!val || 'Odaberite vrstu pogona']"
+        />
         <q-input
           v-model="novaNarudzba.kolicina"
           style="width: 30%"
           label="Količina"
+          type="number"
           filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
@@ -42,13 +90,6 @@
           v-model="novaNarudzba.OIBKupca"
           style="width: 30%"
           label="OIB kupca"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="novaNarudzba.brojSasije"
-          style="width: 30%"
-          label="Broj šasije"
           filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
@@ -120,7 +161,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import api from "src/api";
 import { useQuasar } from "quasar";
 
@@ -134,11 +175,102 @@ const novaNarudzba = ref({
   brojNarudzbe: "",
   datumNarudzbe: "",
   voziloNaNarudzbi: "",
+  oprema: "",
+  boja: "",
+  felge: "",
+  vrstaPogona: "",
   kolicina: "",
   cijena: "",
   OIBKupca: "",
-  brojSasije: "",
   idDjelatnika: "",
+});
+
+// Objekti za q-select
+const opremaVozila = ref([
+  { label: "Sport", value: "Sport" },
+  { label: "Klasik", value: "Klasik" },
+  { label: "Ekonomik", value: "Ekonomik" },
+  { label: "Luxury", value: "Luxury" },
+]);
+
+const bojeVozila = ref([
+  { label: "Crna", value: "Crna" },
+  { label: "Bijela", value: "Bijela" },
+  { label: "Siva", value: "Siva" },
+  { label: "Plava", value: "Plava" },
+  { label: "Crvena", value: "Crvena" },
+  { label: "Zelena", value: "Zelena" },
+]);
+
+const felgeVozila = ref([
+  { label: "Čelične 15''", value: "Čelične 15''" },
+  { label: "Čelične 16''", value: "Čelične 16''" },
+  { label: "Čelične 17''", value: "Čelične 17''" },
+  { label: "Aluminijske 17''", value: "Aluminijske 17''" },
+  { label: "Aluminijske 18''", value: "Aluminijske 18''" },
+  { label: "Aluminijske 19''", value: "Aluminijske 19''" },
+  { label: "Aluminijske 20''", value: "Aluminijske 20''" },
+]);
+
+const gorivoVozila = ref([
+  {
+    label: "Benzin",
+    value: "Benzin",
+    konfiguracijaMotora: ["1.5L 150KS", "2.0L 200KS", "3.0L 300KS"],
+  },
+  {
+    label: "Dizel",
+    value: "Dizel",
+    konfiguracijaMotora: ["1.6L 130KS", "2.0L 180KS", "3.0L 250KS"],
+  },
+  {
+    label: "Hibrid (benzin/struja)",
+    value: "Hibrid (benzin/struja)",
+    konfiguracijaMotora: ["1.5L 180KS", "2.0L 220KS", "3.0L 300KS"],
+  },
+  {
+    label: "Hibrid (dizel/struja)",
+    value: "Hibrid (dizel/struja)",
+    konfiguracijaMotora: ["2.0L 200KS", "3.0L 280KS"],
+  },
+  {
+    label: "Električni pogon",
+    value: "Električni pogon",
+    konfiguracijaMotora: ["150kW (204KS)", "200kW (272KS)", "250kW (340KS)"],
+  },
+  {
+    label: "Plin (LPG)",
+    value: "Plin (LPG)",
+    konfiguracijaMotora: ["1.4L 120KS", "1.8L 150KS", "2.0L 180KS"],
+  },
+]);
+
+const selectedGorivo = ref(""); // Odabrano gorivo
+const selectedMotor = ref(""); // Odabrani motor
+const motoriZaOdabranoGorivo = ref([]); // Filtrirani motori za odabrano gorivo
+
+// Funkcija koja filtrira motore na temelju odabranog goriva
+function filterMotoriZaGorivo() {
+  const gorivo = gorivoVozila.value.find(
+    (g) => g.value === selectedGorivo.value
+  );
+  if (gorivo) {
+    motoriZaOdabranoGorivo.value = gorivo.konfiguracijaMotora;
+  } else {
+    motoriZaOdabranoGorivo.value = [];
+  }
+}
+
+// Initialize motor options on mounted if a fuel type is already selected
+onMounted(() => {
+  if (selectedGorivo.value) {
+    filterMotoriZaGorivo();
+  }
+});
+
+// Pokrećemo funkciju odmah na početku kad se stranica učita
+watch(selectedGorivo, () => {
+  filterMotoriZaGorivo();
 });
 
 // Funkcija za prikaz tablice
@@ -148,6 +280,13 @@ const prikaziTablicu = () => {
     ucitajTablicu();
   }
 };
+
+const pogonaVozila = ref([
+  { label: "Prednji pogon (FWD)", value: "Prednji pogon (FWD)" },
+  { label: "Stražnji pogon (RWD)", value: "Stražnji pogon (RWD)" },
+  { label: "Pogon na sve kotače (AWD)", value: "Pogon na sve kotače (AWD)" },
+  { label: "4x4 pogon", value: "4x4 pogon" },
+]);
 
 // Definicija kolona za tablicu
 const columns = [
@@ -173,6 +312,48 @@ const columns = [
     field: (row) => row.VoziloNaNarudzbi,
   },
   {
+    name: "Oprema",
+    required: true,
+    label: "Oprema",
+    align: "left",
+    field: (row) => row.Oprema,
+  },
+  {
+    name: "Boja",
+    required: true,
+    label: "Boja",
+    align: "left",
+    field: (row) => row.Boja,
+  },
+  {
+    name: "Felge",
+    required: true,
+    label: "Felge",
+    align: "left",
+    field: (row) => row.Felge,
+  },
+  {
+    name: "Motor",
+    required: true,
+    label: "Motor",
+    align: "left",
+    field: (row) => row.Motor,
+  },
+  {
+    name: "VrstaGoriva",
+    required: true,
+    label: "Gorivo",
+    align: "left",
+    field: (row) => row.VrstaGoriva,
+  },
+  {
+    name: "VrstaPogona",
+    required: true,
+    label: "Pogon",
+    align: "left",
+    field: (row) => row.VrstaPogona,
+  },
+  {
     name: "Kolicina",
     required: true,
     label: "Količina",
@@ -194,13 +375,6 @@ const columns = [
     field: (row) => row.OIBKupca,
   },
   {
-    name: "BrojSasije",
-    required: true,
-    label: "Broj Šasije",
-    align: "left",
-    field: (row) => row.BrojSasije,
-  },
-  {
     name: "IdDjelatnika",
     required: true,
     label: "ID Djelatnika",
@@ -215,10 +389,15 @@ const validacija = () => {
     novaNarudzba.value.brojNarudzbe &&
     novaNarudzba.value.datumNarudzbe &&
     novaNarudzba.value.voziloNaNarudzbi &&
+    novaNarudzba.value.oprema &&
+    novaNarudzba.value.boja &&
+    novaNarudzba.value.felge &&
+    selectedGorivo &&
+    selectedMotor &&
+    novaNarudzba.value.vrstaPogona &&
     novaNarudzba.value.kolicina &&
     novaNarudzba.value.cijena &&
     novaNarudzba.value.OIBKupca &&
-    novaNarudzba.value.brojSasije &&
     novaNarudzba.value.idDjelatnika
   );
 };
@@ -269,10 +448,15 @@ const spremi = async () => {
       BrojNarudzbe: novaNarudzba.value.brojNarudzbe,
       DatumNarudzbe: novaNarudzba.value.datumNarudzbe,
       VoziloNaNarudzbi: novaNarudzba.value.voziloNaNarudzbi,
+      Oprema: novaNarudzba.value.oprema,
+      Boja: novaNarudzba.value.boja,
+      Felge: novaNarudzba.value.felge,
+      Motor: selectedMotor.value,
+      VrstaGoriva: selectedGorivo.value,
+      VrstaPogona: novaNarudzba.value.vrstaPogona,
       Kolicina: novaNarudzba.value.kolicina,
       Cijena: novaNarudzba.value.cijena,
       OIBKupca: novaNarudzba.value.OIBKupca,
-      BrojSasije: novaNarudzba.value.brojSasije,
       IdDjelatnika: novaNarudzba.value.idDjelatnika,
     });
 
@@ -283,10 +467,15 @@ const spremi = async () => {
       brojNarudzbe: "",
       datumNarudzbe: "",
       voziloNaNarudzbi: "",
+      oprema: "",
+      boja: "",
+      felge: "",
+      selectedMotor: "",
+      selectedGorivo: "",
+      vrstaPogona: "",
       kolicina: "",
       cijena: "",
       OIBKupca: "",
-      brojSasije: "",
       idDjelatnika: "",
     };
 
@@ -312,10 +501,15 @@ const odaberiRedak = (event, row) => {
     brojNarudzbe: row.BrojNarudzbe,
     datumNarudzbe: row.DatumNarudzbe,
     voziloNaNarudzbi: row.VoziloNaNarudzbi,
+    oprema: row.oprema,
+    boja: row.Boja,
+    felge: row.Felge,
+    selectedMotor: row.Motor,
+    selectedGorivo: row.VrstaGoriva,
+    vrstaPogona: row.VrstaPogona,
     kolicina: row.Kolicina,
     cijena: row.Cijena,
     OIBKupca: row.OIBKupca,
-    brojSasije: row.BrojSasije,
     idDjelatnika: row.IdDjelatnika,
   };
 };
@@ -335,10 +529,15 @@ const azuriraj = async () => {
       BrojNarudzbe: novaNarudzba.value.brojNarudzbe,
       DatumNarudzbe: novaNarudzba.value.datumNarudzbe,
       VoziloNaNarudzbi: novaNarudzba.value.voziloNaNarudzbi,
+      Oprema: novaNarudzba.value.oprema,
+      Boja: novoVozilo.value.boja,
+      Felge: novaNarudzba.value.felge,
+      Motor: selectedMotor.value,
+      VrstaGoriva: selectedGorivo.value,
+      VrstaPogona: novoVozilo.value.vrstaPogona,
       Kolicina: novaNarudzba.value.kolicina,
       Cijena: novaNarudzba.value.cijena,
       OIBKupca: novaNarudzba.value.OIBKupca,
-      BrojSasije: novaNarudzba.value.brojSasije,
       IdDjelatnika: novaNarudzba.value.idDjelatnika,
     });
 
@@ -349,10 +548,15 @@ const azuriraj = async () => {
       brojNarudzbe: "",
       datumNarudzbe: "",
       voziloNaNarudzbi: "",
+      oprema: "",
+      boja: "",
+      felge: "",
+      selectedMotor: "",
+      selectedGorivo: "",
+      vrstaPogona: "",
       kolicina: "",
       cijena: "",
       OIBKupca: "",
-      brojSasije: "",
       idDjelatnika: "",
     };
   } catch (error) {
