@@ -272,6 +272,16 @@ const spremi = async () => {
   }
 
   try {
+    const response = await api.getKupci();
+    const postojiOib = response.data.some(
+      (kupac) => kupac.OIB === noviKupac.value.oib
+    );
+
+    if (postojiOib) {
+      $q.notify({ type: "negative", message: "OIB već postoji u bazi!" });
+      return;
+    }
+
     await api.createKupac({
       OIB: noviKupac.value.oib,
       ImeKupca: noviKupac.value.ime,

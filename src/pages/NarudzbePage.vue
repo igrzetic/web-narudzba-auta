@@ -3,11 +3,14 @@
     <h4>Dodaj novu narudžbu</h4>
     <q-form ref="formRef" @submit.prevent="spremi">
       <div class="q-gutter-md">
-        <q-input
+        <q-select
           v-model="novaNarudzba.voziloNaNarudzbi"
           style="width: 30%"
           label="Vozilo na narudžbi"
           filled
+          emit-value
+          map-options
+          :options="vozilaNaNarudzbi"
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
         <q-select
@@ -68,7 +71,7 @@
           filled
           emit-value
           map-options
-          :options="pogonaVozila"
+          :options="pogonVozila"
           :rules="[(val) => !!val || 'Odaberite vrstu pogona']"
         />
         <q-input
@@ -79,25 +82,24 @@
           filled
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
-        <q-input
-          v-model="novaNarudzba.cijena"
-          style="width: 30%"
-          label="Cijena"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
+        <q-select
           v-model="novaNarudzba.OIBKupca"
           style="width: 30%"
           label="OIB kupca"
           filled
+          emit-value
+          map-options
+          :options="oibOpcije"
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
-        <q-input
+        <q-select
           v-model="novaNarudzba.idDjelatnika"
           style="width: 30%"
           label="ID Djelatnika"
           filled
+          emit-value
+          map-options
+          :options="idDjelatnikaOpcije"
           :rules="[(val) => !!val || 'Ovo polje je obavezno']"
         />
       </div>
@@ -164,11 +166,15 @@
 import { ref, onMounted, watch } from "vue";
 import api from "src/api";
 import { useQuasar } from "quasar";
+import axios from "axios";
 
 const narudzbe = ref([]);
 const prikaz = ref(false);
 const $q = useQuasar();
 const odabraniRedak = ref(null);
+const vozilaNaNarudzbi = ref([]);
+const oibOpcije = ref([]);
+const idDjelatnikaOpcije = ref([]);
 
 // Nova narudžba
 const novaNarudzba = ref({
@@ -180,12 +186,119 @@ const novaNarudzba = ref({
   felge: "",
   vrstaPogona: "",
   kolicina: "",
-  cijena: "",
   OIBKupca: "",
   idDjelatnika: "",
 });
 
-// Objekti za q-select
+const dohvatiVozila = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/vozila");
+    vozilaNaNarudzbi.value = response.data.map((vozilo) => ({
+      label: `${vozilo.Marka} ${vozilo.Model}`,
+      value: `${vozilo.Marka} ${vozilo.Model}`,
+    }));
+  } catch (error) {
+    console.error("Greška pri dohvaćanju vozila:", error);
+  }
+};
+
+onMounted(dohvatiVozila);
+
+let cijena = 0;
+let brojSasije = "";
+
+const dohvatiCijene = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/vozila");
+
+    const odabranoVozilo = response.data.find(
+      (vozilo) =>
+        `${vozilo.Marka} ${vozilo.Model}`.trim() ===
+        `${novaNarudzba.value.voziloNaNarudzbi}`.trim()
+    );
+
+    if (odabranoVozilo) {
+      cijena = odabranoVozilo.Cijena;
+      brojSasije = odabranoVozilo.BrojSasije;
+      console.log(
+        `Broj šasije: ${odabranoVozilo.BrojSasije}, Cijena: ${odabranoVozilo.Cijena}`
+      );
+    } else {
+      console.log("Vozilo nije pronađeno!");
+    }
+  } catch (error) {
+    console.error("Greška pri dohvaćanju cijena:", error);
+  }
+};
+
+watch(
+  () => novaNarudzba.value.voziloNaNarudzbi,
+  () => {
+    dohvatiCijene();
+  }
+);
+
+const dohvatiOib = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/kupci");
+
+    // Mapiraj sve OIB-ove u opcije za q-select
+    oibOpcije.value = response.data.map((kupac) => ({
+      label: kupac.OIB, // OIB će biti prikazan kao labela
+      value: kupac.OIB, // OIB će biti postavljen kao vrijednost
+    }));
+  } catch (error) {
+    console.error("Greška pri dohvaćanju OIB-ova kupaca:", error);
+  }
+};
+
+onMounted(dohvatiOib);
+
+const dohvatiIdDjelatnika = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/djelatnici");
+
+    // Mapiraj sve ID u opcije za q-select
+    idDjelatnikaOpcije.value = response.data.map((djelatnik) => ({
+      label: djelatnik.IdDjelatnika, // OIB će biti prikazan kao labela
+      value: djelatnik.IdDjelatnika, // OIB će biti postavljen kao vrijednost
+    }));
+  } catch (error) {
+    console.error("Greška pri dohvaćanju ID djelatnika:", error);
+  }
+};
+
+onMounted(dohvatiIdDjelatnika);
+
+let idKupca = 0;
+
+const dohvatiIdKupca = async () => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/kupci");
+
+    const odabraniOib = response.data.find(
+      (kupac) => `${kupac.OIB}` === `${novaNarudzba.value.OIBKupca}`
+    );
+
+    if (odabraniOib) {
+      idKupca = odabraniOib.IdKupca;
+      console.log(`Id kupca: ${odabraniOib.IdKupca}`);
+    } else {
+      console.log("Kupac nije pronađen!");
+    }
+  } catch (error) {
+    console.error("Greška pri dohvaćanju podataka:", error);
+  }
+};
+
+// Reaktivno promatranje promjena na OIB kupca
+watch(
+  () => novaNarudzba.value.OIBKupca,
+  () => {
+    dohvatiIdKupca();
+  }
+);
+
 const opremaVozila = ref([
   { label: "Sport", value: "Sport" },
   { label: "Klasik", value: "Klasik" },
@@ -281,7 +394,7 @@ const prikaziTablicu = () => {
   }
 };
 
-const pogonaVozila = ref([
+const pogonVozila = ref([
   { label: "Prednji pogon (FWD)", value: "Prednji pogon (FWD)" },
   { label: "Stražnji pogon (RWD)", value: "Stražnji pogon (RWD)" },
   { label: "Pogon na sve kotače (AWD)", value: "Pogon na sve kotače (AWD)" },
@@ -361,18 +474,18 @@ const columns = [
     field: (row) => row.Kolicina,
   },
   {
-    name: "Cijena",
-    required: true,
-    label: "Cijena",
-    align: "left",
-    field: (row) => row.Cijena,
-  },
-  {
     name: "OIBKupca",
     required: true,
     label: "OIB Kupca",
     align: "left",
     field: (row) => row.OIBKupca,
+  },
+  {
+    name: "Cijena",
+    required: true,
+    label: "Cijena (€)",
+    align: "left",
+    field: (row) => row.Cijena,
   },
   {
     name: "IdDjelatnika",
@@ -386,8 +499,6 @@ const columns = [
 // Funkcija za validaciju inputa
 const validacija = () => {
   return (
-    novaNarudzba.value.brojNarudzbe &&
-    novaNarudzba.value.datumNarudzbe &&
     novaNarudzba.value.voziloNaNarudzbi &&
     novaNarudzba.value.oprema &&
     novaNarudzba.value.boja &&
@@ -396,7 +507,6 @@ const validacija = () => {
     selectedMotor &&
     novaNarudzba.value.vrstaPogona &&
     novaNarudzba.value.kolicina &&
-    novaNarudzba.value.cijena &&
     novaNarudzba.value.OIBKupca &&
     novaNarudzba.value.idDjelatnika
   );
@@ -443,10 +553,17 @@ const spremi = async () => {
     return;
   }
 
+  const ukupnaCijena = cijena * parseInt(novaNarudzba.value.kolicina, 10);
+
+  await dohvatiCijene();
+
+  if (cijena === 0) {
+    $q.notify({ type: "warning", message: "Cijena vozila nije pronađena!" });
+    return;
+  }
+
   try {
     await api.createNarudzba({
-      BrojNarudzbe: novaNarudzba.value.brojNarudzbe,
-      DatumNarudzbe: novaNarudzba.value.datumNarudzbe,
       VoziloNaNarudzbi: novaNarudzba.value.voziloNaNarudzbi,
       Oprema: novaNarudzba.value.oprema,
       Boja: novaNarudzba.value.boja,
@@ -455,8 +572,10 @@ const spremi = async () => {
       VrstaGoriva: selectedGorivo.value,
       VrstaPogona: novaNarudzba.value.vrstaPogona,
       Kolicina: novaNarudzba.value.kolicina,
-      Cijena: novaNarudzba.value.cijena,
       OIBKupca: novaNarudzba.value.OIBKupca,
+      Cijena: ukupnaCijena,
+      IdKupca: idKupca,
+      BrojSasije: brojSasije,
       IdDjelatnika: novaNarudzba.value.idDjelatnika,
     });
 
@@ -474,8 +593,8 @@ const spremi = async () => {
       selectedGorivo: "",
       vrstaPogona: "",
       kolicina: "",
-      cijena: "",
       OIBKupca: "",
+      cijena: "",
       idDjelatnika: "",
     };
 
@@ -498,18 +617,16 @@ const odaberiRedak = (event, row) => {
 
   // Popunjavanje inputa podacima iz reda
   novaNarudzba.value = {
-    brojNarudzbe: row.BrojNarudzbe,
-    datumNarudzbe: row.DatumNarudzbe,
     voziloNaNarudzbi: row.VoziloNaNarudzbi,
-    oprema: row.oprema,
+    oprema: row.Oprema,
     boja: row.Boja,
     felge: row.Felge,
     selectedMotor: row.Motor,
     selectedGorivo: row.VrstaGoriva,
     vrstaPogona: row.VrstaPogona,
     kolicina: row.Kolicina,
-    cijena: row.Cijena,
     OIBKupca: row.OIBKupca,
+    cijena: row.Cijena,
     idDjelatnika: row.IdDjelatnika,
   };
 };
@@ -524,20 +641,31 @@ const azuriraj = async () => {
     return;
   }
 
+  const ukupnaCijena = cijena * parseInt(novaNarudzba.value.kolicina, 10);
+
+  await dohvatiCijene();
+
+  if (cijena === 0) {
+    $q.notify({ type: "warning", message: "Cijena vozila nije pronađena!" });
+    return;
+  }
+
   try {
     await api.updateNarudzba(odabraniRedak.value.BrojNarudzbe, {
       BrojNarudzbe: novaNarudzba.value.brojNarudzbe,
       DatumNarudzbe: novaNarudzba.value.datumNarudzbe,
       VoziloNaNarudzbi: novaNarudzba.value.voziloNaNarudzbi,
       Oprema: novaNarudzba.value.oprema,
-      Boja: novoVozilo.value.boja,
+      Boja: novaNarudzba.value.boja,
       Felge: novaNarudzba.value.felge,
       Motor: selectedMotor.value,
       VrstaGoriva: selectedGorivo.value,
-      VrstaPogona: novoVozilo.value.vrstaPogona,
+      VrstaPogona: novaNarudzba.value.vrstaPogona,
       Kolicina: novaNarudzba.value.kolicina,
-      Cijena: novaNarudzba.value.cijena,
       OIBKupca: novaNarudzba.value.OIBKupca,
+      Cijena: ukupnaCijena,
+      IdKupca: idKupca,
+      BrojSasije: brojSasije,
       IdDjelatnika: novaNarudzba.value.idDjelatnika,
     });
 
@@ -555,8 +683,8 @@ const azuriraj = async () => {
       selectedGorivo: "",
       vrstaPogona: "",
       kolicina: "",
-      cijena: "",
       OIBKupca: "",
+      cijena: "",
       idDjelatnika: "",
     };
   } catch (error) {

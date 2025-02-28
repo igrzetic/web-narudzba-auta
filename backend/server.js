@@ -37,7 +37,6 @@ app.get("/api/narudzbe", (req, res) => {
 // Dodaj novu narudžbu
 app.post("/api/narudzbe", (req, res) => {
   const {
-    DatumNarudzbe,
     VoziloNaNarudzbi,
     Oprema,
     Boja,
@@ -46,15 +45,15 @@ app.post("/api/narudzbe", (req, res) => {
     VrstaGoriva,
     VrstaPogona,
     Kolicina,
+    OIBKupca,
     Cijena,
-    id,
+    IdKupca,
     BrojSasije,
     IdDjelatnika,
   } = req.body;
   db.query(
-    "INSERT INTO Narudzba_oot (DatumNarudzbe, VoziloNaNarudzbi, Oprema, Boja, Felge, Motor, VrstaGoriva, VrstaPogona, Kolicina, Cijena, id, BrojSasije, IdDjelatnika) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Narudzba_oot (VoziloNaNarudzbi, Oprema, Boja, Felge, Motor, VrstaGoriva, VrstaPogona, Kolicina, OIBKUpca, Cijena, IdKupca, BrojSasije, IdDjelatnika) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
-      DatumNarudzbe,
       VoziloNaNarudzbi,
       Oprema,
       Boja,
@@ -63,8 +62,9 @@ app.post("/api/narudzbe", (req, res) => {
       VrstaGoriva,
       VrstaPogona,
       Kolicina,
+      OIBKupca,
       Cijena,
-      id,
+      IdKupca,
       BrojSasije,
       IdDjelatnika,
     ],
@@ -78,7 +78,6 @@ app.post("/api/narudzbe", (req, res) => {
 // Ažuriraj postojeću narudžbu
 app.put("/api/narudzbe/:id", (req, res) => {
   const {
-    DatumNarudzbe,
     VoziloNaNarudzbi,
     Oprema,
     Boja,
@@ -87,15 +86,15 @@ app.put("/api/narudzbe/:id", (req, res) => {
     VrstaGoriva,
     VrstaPogona,
     Kolicina,
+    OIBKupca,
     Cijena,
-    id,
+    IdKupca,
     BrojSasije,
     IdDjelatnika,
   } = req.body;
   db.query(
-    "UPDATE Narudzba_oot SET DatumNarudzbe = ?, VoziloNaNarudzbi = ?, Oprema = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ?, Kolicina = ?, Cijena = ?, id = ?, BrojSasije = ?, IdDjelatnika = ? WHERE BrojNarudzbe = ?",
+    "UPDATE Narudzba_oot SET VoziloNaNarudzbi = ?, Oprema = ?, Boja = ?, Felge = ?, Motor = ?, VrstaGoriva = ?, VrstaPogona = ?, Kolicina = ?, OIBKupca = ?, Cijena = ?, IdKupca = ?, BrojSasije = ? , IdDjelatnika = ? WHERE BrojNarudzbe = ?",
     [
-      DatumNarudzbe,
       VoziloNaNarudzbi,
       Oprema,
       Boja,
@@ -104,8 +103,9 @@ app.put("/api/narudzbe/:id", (req, res) => {
       VrstaGoriva,
       VrstaPogona,
       Kolicina,
+      OIBKupca,
       Cijena,
-      id,
+      IdKupca,
       BrojSasije,
       IdDjelatnika,
       req.params.id,
