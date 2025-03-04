@@ -269,7 +269,86 @@ app.delete("/api/kupci/:id", (req, res) => {
   );
 });
 
+// === CRUD operacije za Racun_oot === //
+
+// Dohvati sve račune
+app.get("/api/racuni", (req, res) => {
+  db.query("SELECT * FROM Racun_oot", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Dodaj novi račun
+app.post("/api/racuni", (req, res) => {
+  const {
+    IdDjelatnika,
+    StavkaRacuna,
+    Kolicina,
+    IznosRacuna,
+    NacinPlacanja,
+    IdKupca,
+    BrojNarudzbe,
+  } = req.body;
+  db.query(
+    "INSERT INTO Racun_oot (IdDjelatnika, StavkaRacuna, Kolicina, IznosRacuna, NacinPlacanja, IdKupca, BrojNarudzbe) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [
+      IdDjelatnika,
+      StavkaRacuna,
+      Kolicina,
+      IznosRacuna,
+      NacinPlacanja,
+      IdKupca,
+      BrojNarudzbe,
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Račun dodan", id: results.insertId });
+    }
+  );
+});
+
+// Obriši račun
+app.delete("/api/racuni/:id", (req, res) => {
+  db.query(
+    "DELETE FROM Racun_oot WHERE BrojRacuna = ?",
+    [req.params.id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.affectedRows === 0)
+        return res.status(404).json({ error: "Račun nije pronađen" });
+      res.json({ message: "Račun obrisan" });
+    }
+  );
+});
+
 // === CRUD operacije za Djelatnik_oot === //
+
+/*
+app.post("api/djelatnici", (req, res) => {
+  const { korisnickoIme, lozinka } = req.body;
+
+  db.query(
+    "select * from Djelatnik_oot where korisnickoIme = ? and lozinka = ?",
+    [korisnickoIme, lozinka],
+    (err, results) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ success: false, message: "Greška u bazi." });
+      }
+      if (results.length > 0) {
+        // Ako je pronađen korisnik, provjeravamo je li to admin
+        const korisnik = results[0];
+        const uloga = korisnik.korisnickoIme === "admin" ? "admin" : "korisnik";
+        return res.send({ success: true, uloga });
+      } else {
+        return res.send({ success: false });
+      }
+    }
+  );
+});
+*/
 
 // Dohvati sve djelatnike
 app.get("/api/djelatnici", (req, res) => {

@@ -178,14 +178,12 @@ const idDjelatnikaOpcije = ref([]);
 
 // Nova narudžba
 const novaNarudzba = ref({
-  brojNarudzbe: "",
-  datumNarudzbe: "",
   voziloNaNarudzbi: "",
   oprema: "",
   boja: "",
   felge: "",
   vrstaPogona: "",
-  kolicina: "",
+  kolicina: 0,
   OIBKupca: "",
   idDjelatnika: "",
 });
@@ -516,7 +514,6 @@ const validacija = () => {
 const ucitajTablicu = async () => {
   try {
     const response = await api.getNarudzbe(); // API poziv
-    // console.log("Api response: ", response.data);
 
     // Obrada datuma
     narudzbe.value = response.data.map((narudzba) => {
@@ -583,8 +580,6 @@ const spremi = async () => {
 
     // Resetiranje forme
     novaNarudzba.value = {
-      brojNarudzbe: "",
-      datumNarudzbe: "",
       voziloNaNarudzbi: "",
       oprema: "",
       boja: "",
@@ -652,8 +647,6 @@ const azuriraj = async () => {
 
   try {
     await api.updateNarudzba(odabraniRedak.value.BrojNarudzbe, {
-      BrojNarudzbe: novaNarudzba.value.brojNarudzbe,
-      DatumNarudzbe: novaNarudzba.value.datumNarudzbe,
       VoziloNaNarudzbi: novaNarudzba.value.voziloNaNarudzbi,
       Oprema: novaNarudzba.value.oprema,
       Boja: novaNarudzba.value.boja,
@@ -673,8 +666,6 @@ const azuriraj = async () => {
     ucitajTablicu();
     odabraniRedak.value = null;
     novaNarudzba.value = {
-      brojNarudzbe: "",
-      datumNarudzbe: "",
       voziloNaNarudzbi: "",
       oprema: "",
       boja: "",

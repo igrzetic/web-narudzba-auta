@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "layouts/MainLayout.vue";
-
+import LoginPage from "pages/LoginPage.vue";
 import NarudzbePage from "pages/NarudzbePage.vue";
 import VozilaPage from "pages/VozilaPage.vue";
 import KupciPage from "pages/KupciPage.vue";
@@ -8,6 +8,10 @@ import RacuniPage from "pages/RacuniPage.vue";
 import DjelatniciPage from "pages/DjelatniciPage.vue";
 
 const routes = [
+  // {
+  //   path: "/login",
+  //   component: LoginPage,
+  // },
   {
     path: "/",
     component: MainLayout,
@@ -17,6 +21,7 @@ const routes = [
       { path: "kupci", component: KupciPage },
       { path: "racuni", component: RacuniPage },
       { path: "djelatnici", component: DjelatniciPage },
+      { path: "login", component: LoginPage },
     ],
   },
 

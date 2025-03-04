@@ -55,6 +55,13 @@
             </q-item-section>
             <q-item-section>Djelatnici</q-item-section>
           </q-item>
+
+          <q-item clickable v-ripple to="/login">
+            <q-item-section avatar>
+              <q-icon name="account_circle" />
+            </q-item-section>
+            <q-item-section>Login</q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -67,8 +74,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const drawer = ref(false);
 const miniState = ref(true);
+const userRole = ref("");
+
+onMounted(() => {
+  userRole.value = localStorage.getItem("userRole");
+});
 </script>

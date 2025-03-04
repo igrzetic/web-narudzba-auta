@@ -169,12 +169,25 @@ export default {
 
   // Dodaj novi račun
   createRacun(racun) {
-    return api.post("/racuni", racun);
-  },
-
-  // Ažuriraj postojeći račun
-  updateRacun(id, racun) {
-    return api.put(`/racuni/${id}`, racun);
+    console.log("Podaci za slanje: ", racun);
+    return api
+      .post("/racuni", racun)
+      .then((response) => console.log("Uspjeh: ", response))
+      .catch((error) => {
+        console.error("Greška: ", error);
+        if (error.response) {
+          // Ako server vrati odgovor (greška sa status kodom)
+          console.error("Podaci odgovora servera: ", error.response.data);
+          console.error("Status kod: ", error.response.status);
+          console.error("Glavni razlog greške: ", error.response.statusText);
+        } else if (error.request) {
+          // Ako nije bilo odgovora od servera
+          console.error("Nema odgovora od servera: ", error.request);
+        } else {
+          // Greška u postavkama zahtjeva
+          console.error("Greška u postavkama zahtjeva: ", error.message);
+        }
+      });
   },
 
   // Obriši račun
