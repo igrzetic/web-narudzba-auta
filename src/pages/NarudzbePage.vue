@@ -1,145 +1,153 @@
 <template>
   <q-page class="q-pa-md">
-    <h4>Dodaj novu narudžbu</h4>
-    <q-form ref="formRef" @submit.prevent="spremi">
-      <div class="q-gutter-md">
-        <q-select
-          v-model="novaNarudzba.voziloNaNarudzbi"
-          style="width: 30%"
-          label="Vozilo na narudžbi"
-          filled
-          emit-value
-          map-options
-          :options="vozilaNaNarudzbi"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-select
-          v-model="novaNarudzba.oprema"
-          style="width: 30%"
-          label="Oprema"
-          filled
-          emit-value
-          map-options
-          :options="opremaVozila"
-          :rules="[(val) => !!val || 'Odaberite opremu vozila']"
-        />
-        <q-select
-          v-model="novaNarudzba.boja"
-          style="width: 30%"
-          label="Boja vozila"
-          filled
-          emit-value
-          map-options
-          :options="bojeVozila"
-          :rules="[(val) => !!val || 'Odaberite boju vozila']"
-        />
-        <q-select
-          v-model="novaNarudzba.felge"
-          style="width: 30%"
-          label="Felge vozila"
-          filled
-          emit-value
-          map-options
-          :options="felgeVozila"
-          :rules="[(val) => !!val || 'Odaberite felge vozila']"
-        />
-        <q-select
-          v-model="selectedGorivo"
-          style="width: 30%"
-          label="Vrsta goriva"
-          filled
-          emit-value
-          map-options
-          :options="gorivoVozila"
-          :rules="[(val) => !!val || 'Odaberite vrstu goriva']"
-        />
-        <q-select
-          v-model="selectedMotor"
-          style="width: 30%"
-          label="Motor vozila"
-          filled
-          emit-value
-          map-options
-          :options="motoriZaOdabranoGorivo"
-          :rules="[(val) => !!val || 'Odaberite motor vozila']"
-          :disable="!selectedGorivo"
-        />
-        <q-select
-          v-model="novaNarudzba.vrstaPogona"
-          style="width: 30%"
-          label="Vrsta pogona"
-          filled
-          emit-value
-          map-options
-          :options="pogonVozila"
-          :rules="[(val) => !!val || 'Odaberite vrstu pogona']"
-        />
-        <q-input
-          v-model="novaNarudzba.kolicina"
-          style="width: 30%"
-          label="Količina"
-          type="number"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-select
-          v-model="novaNarudzba.OIBKupca"
-          style="width: 30%"
-          label="OIB kupca"
-          filled
-          emit-value
-          map-options
-          :options="oibOpcije"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-select
-          v-model="novaNarudzba.idDjelatnika"
-          style="width: 30%"
-          label="ID Djelatnika"
-          filled
-          emit-value
-          map-options
-          :options="idDjelatnikaOpcije"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-      </div>
+    <h4 style="margin: 2% 10%">Dodaj novu narudžbu</h4>
+    <q-card
+      class="q-pa-lg shadow-3"
+      style="
+        width: 50%;
+        max-width: 90%;
+        border-radius: 15px;
+        margin: 0 10%;
+        background-color: #dedede;
+      "
+    >
+      <q-form ref="formRef" @submit.prevent="spremi" style="padding: 5%">
+        <div class="q-gutter-md">
+          <q-select
+            v-model="novaNarudzba.voziloNaNarudzbi"
+            label="Vozilo na narudžbi"
+            outlined
+            emit-value
+            map-options
+            :options="vozilaNaNarudzbi"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-select
+            v-model="novaNarudzba.oprema"
+            label="Oprema"
+            outlined
+            emit-value
+            map-options
+            :options="opremaVozila"
+            :rules="[(val) => !!val || 'Odaberite opremu vozila']"
+          />
+          <q-select
+            v-model="novaNarudzba.boja"
+            label="Boja vozila"
+            outlined
+            emit-value
+            map-options
+            :options="bojeVozila"
+            :rules="[(val) => !!val || 'Odaberite boju vozila']"
+          />
+          <q-select
+            v-model="novaNarudzba.felge"
+            label="Felge vozila"
+            outlined
+            emit-value
+            map-options
+            :options="felgeVozila"
+            :rules="[(val) => !!val || 'Odaberite felge vozila']"
+          />
+          <q-select
+            v-model="selectedGorivo"
+            label="Vrsta goriva"
+            outlined
+            emit-value
+            map-options
+            :options="gorivoVozila"
+            :rules="[(val) => !!val || 'Odaberite vrstu goriva']"
+          />
+          <q-select
+            v-model="selectedMotor"
+            label="Motor vozila"
+            outlined
+            emit-value
+            map-options
+            :options="motoriZaOdabranoGorivo"
+            :rules="[(val) => !!val || 'Odaberite motor vozila']"
+            :disable="!selectedGorivo"
+          />
+          <q-select
+            v-model="novaNarudzba.vrstaPogona"
+            label="Vrsta pogona"
+            outlined
+            emit-value
+            map-options
+            :options="pogonVozila"
+            :rules="[(val) => !!val || 'Odaberite vrstu pogona']"
+          />
+          <q-input
+            v-model="novaNarudzba.kolicina"
+            label="Količina"
+            type="number"
+            outlined
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-select
+            v-model="novaNarudzba.OIBKupca"
+            label="OIB kupca"
+            outlined
+            emit-value
+            map-options
+            :options="oibOpcije"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-select
+            v-model="novaNarudzba.idDjelatnika"
+            label="ID Djelatnika"
+            outlined
+            emit-value
+            map-options
+            :options="idDjelatnikaOpcije"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+        </div>
 
-      <div class="row q-gutter-x-md">
-        <q-btn
-          push
-          type="submit"
-          label="Spremi"
-          color="primary"
-          class="q-mt-md"
-          :disable="!validacija()"
-        />
-        <q-btn
-          push
-          label="Ažuriraj"
-          color="secondary"
-          class="q-mt-md"
-          @click="azuriraj"
-          :disable="!odabraniRedak"
-        />
-        <q-btn
-          push
-          label="Obriši"
-          color="secondary"
-          class="q-mt-md"
-          @click="obrisi"
-          :disable="!odabraniRedak"
-        />
-      </div>
-    </q-form>
+        <div class="row q-gutter-x-md">
+          <q-btn
+            push
+            type="submit"
+            label="Spremi"
+            color="primary"
+            class="q-mt-md"
+            :disable="!validacija()"
+          />
+          <q-btn
+            push
+            label="Ažuriraj"
+            color="secondary"
+            class="q-mt-md"
+            @click="azuriraj"
+            :disable="!odabraniRedak"
+          />
+          <q-btn
+            push
+            label="Obriši"
+            color="secondary"
+            class="q-mt-md"
+            @click="obrisi"
+            :disable="!odabraniRedak"
+          />
+        </div>
+      </q-form>
+    </q-card>
 
-    <q-separator class="q-my-md" />
+    <div class="flex justify-center">
+      <q-separator
+        class="q-my-lg"
+        style="width: 90%; height: 3px; border-radius: 100px; margin: 5%"
+      />
+    </div>
 
     <q-btn
+      push
       :label="prikaz ? 'Sakrij narudžbe' : 'Prikaži narudžbe'"
       class="q-mb-md"
       color="primary"
       @click="prikaziTablicu"
       id="prikaziTablicuBtn"
+      style="margin: 0 10%; margin-bottom: 3%"
     />
 
     <q-table
@@ -149,15 +157,18 @@
       row-key="BrojNarudzbe"
       v-show="prikaz"
       @row-click="odaberiRedak"
-      style="width: 85%; margin: 20px auto"
+      style="width: 85%; margin: 20px auto; border-radius: 15px"
+      class="shadow-3"
     />
 
     <q-btn
+      push
       v-show="prikaz"
       @click="ucitajTablicu"
       label="Osvježi"
       color="primary"
       class="q-mt-md"
+      style="margin: 2% 10%"
     />
   </q-page>
 </template>

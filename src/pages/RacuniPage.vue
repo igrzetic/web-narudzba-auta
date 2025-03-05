@@ -1,86 +1,84 @@
 <template>
   <q-page class="q-pa-md">
-    <h4>Dodaj novi račun</h4>
-    <q-form ref="formRef" @submit.prevent="spremi">
-      <div class="q gutter-md">
-        <q-select
-          v-model="noviRacun.brojNarudzbe"
-          style="width: 30%"
-          label="Broj narudžbe"
-          emit-value
-          map-options
-          filled
-          :options="narudzbe"
-          :rules="[(val) => !!val || 'Odaberite narudžbu']"
-        />
-        <q-input
-          v-model="idDjelatnika"
-          style="width: 30%"
-          label="Djelatnik"
-          readonly
-          filled
-        />
-        <q-input
-          v-model="vozilo"
-          style="width: 30%"
-          label="Vozilo"
-          readonly
-          filled
-        />
-        <q-input
-          v-model="kolicina"
-          style="width: 30%"
-          label="Količina"
-          readonly
-          filled
-        />
-        <q-input
-          v-model="iznosRacuna"
-          style="width: 30%"
-          label="Iznos računa"
-          readonly
-          filled
-        />
-        <q-select
-          v-model="noviRacun.nacinPlacanja"
-          style="width: 30%"
-          label="Način plaćanja"
-          emit-value
-          map-options
-          filled
-          :options="naciniPlacanja"
-          :rules="[(val) => !!val || 'Odaberite način plaćanja']"
-        />
-      </div>
+    <h4 style="margin: 2% 10%">Dodaj novi račun</h4>
 
-      <div class="row q-gutter-x-md">
-        <q-btn
-          push
-          type="submit"
-          label="Izradi račun"
-          color="primary"
-          class="q-mt-md"
-          :disable="!validacija()"
-        />
-        <q-btn
-          push
-          label="Obriši"
-          color="secondary"
-          class="q-mt-md"
-          @click="obrisi"
-          :disable="!odabraniRedak"
-        />
-      </div>
-    </q-form>
+    <q-card
+      class="q-pa-lg shadow-3"
+      style="
+        width: 50%;
+        max-width: 90%;
+        border-radius: 15px;
+        margin: 0 10%;
+        background-color: #dedede;
+      "
+    >
+      <q-form ref="formRef" @submit.prevent="spremi">
+        <div class="q gutter-md">
+          <q-select
+            v-model="noviRacun.brojNarudzbe"
+            label="Broj narudžbe"
+            emit-value
+            map-options
+            outlined
+            :options="narudzbe"
+            :rules="[(val) => !!val || 'Odaberite narudžbu']"
+          />
+          <q-input v-model="idDjelatnika" label="Djelatnik" readonly outlined />
+          <q-input v-model="vozilo" label="Vozilo" readonly outlined />
+          <q-input v-model="kolicina" label="Količina" readonly outlined />
+          <q-input
+            v-model="iznosRacuna"
+            label="Iznos računa"
+            readonly
+            outlined
+          />
+          <q-select
+            v-model="noviRacun.nacinPlacanja"
+            label="Način plaćanja"
+            emit-value
+            map-options
+            outlined
+            :options="naciniPlacanja"
+            :rules="[(val) => !!val || 'Odaberite način plaćanja']"
+          />
+        </div>
 
-    <q-separator class="q-my-md" />
+        <div class="row q-gutter-x-md">
+          <q-btn
+            push
+            type="submit"
+            label="Izradi račun"
+            color="primary"
+            class="q-mt-md"
+            :disable="!validacija()"
+          />
+          <q-btn
+            push
+            label="Obriši"
+            color="secondary"
+            class="q-mt-md"
+            @click="obrisi"
+            :disable="!odabraniRedak"
+          />
+        </div>
+      </q-form>
+    </q-card>
+
+    <div class="flex justify-center">
+      <q-separator
+        class="q-my-lg"
+        style="width: 90%; height: 3px; border-radius: 100px; margin: 5%"
+      />
+    </div>
 
     <q-btn
+      push
       :label="prikaz ? 'Sakrij račune' : 'Prikaži račune'"
       class="q-mb-md"
       color="primary"
       @click="prikaziTablicu"
       id="prikaziTablicuBtn"
+      style="margin: 0 10%; margin-bottom: 3%"
     />
 
     <q-table
@@ -90,15 +88,18 @@
       row-key="brojRacuna"
       v-if="prikaz"
       @row-click="odaberiRedak"
-      style="width: 85%; margin: 20px auto"
+      style="width: 85%; margin: 20px auto; border-radius: 15px"
+      class="shadow-3"
     />
 
     <q-btn
+      push
       v-show="prikaz"
       @click="ucitajTablicu"
       label="Osvježi"
       color="primary"
       class="q-mt-md"
+      style="margin: 2% 10%"
     />
   </q-page>
 </template>

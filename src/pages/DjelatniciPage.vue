@@ -1,68 +1,80 @@
 <template>
   <q-page class="q-pa-md">
-    <h4>Dodaj novog djelatnika</h4>
-    <q-form ref="formRef" @submit.prevent="spremi">
-      <div class="q-gutter-md">
-        <q-input
-          v-model="imeFormatted"
-          style="width: 30%"
-          label="Ime djelatnika"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="prezimeFormatted"
-          style="width: 30%"
-          label="Prezime djelatnika"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="noviDjelatnik.korisnickoIme"
-          style="width: 30%"
-          label="Korisničko ime"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="noviDjelatnik.lozinka"
-          style="width: 30%"
-          label="Lozinka"
-          filled
-          type="password"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-      </div>
+    <h4 style="margin: 2% 10%">Dodaj novog djelatnika</h4>
+    <q-card
+      class="q-pa-lg shadow-3"
+      style="
+        width: 50%;
+        max-width: 90%;
+        border-radius: 15px;
+        margin: 0 10%;
+        background-color: #dedede;
+      "
+    >
+      <q-form ref="formRef" @submit.prevent="spremi" style="padding: 5%">
+        <div class="q-gutter-md">
+          <q-input
+            v-model="imeFormatted"
+            label="Ime djelatnika"
+            outlined
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-input
+            v-model="prezimeFormatted"
+            label="Prezime djelatnika"
+            outlined
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-input
+            v-model="noviDjelatnik.korisnickoIme"
+            label="Korisničko ime"
+            outlined
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-input
+            v-model="noviDjelatnik.lozinka"
+            label="Lozinka"
+            outlined
+            type="password"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+        </div>
 
-      <div class="row q-gutter-x-md">
-        <q-btn
-          push
-          type="submit"
-          label="Spremi"
-          color="primary"
-          class="q-mt-md"
-          :disable="!validacija()"
-        />
-        <q-btn
-          push
-          label="Ažuriraj"
-          color="secondary"
-          class="q-mt-md"
-          @click="azuriraj"
-          :disable="!odabraniRedak"
-        />
-        <q-btn
-          push
-          label="Obriši"
-          color="secondary"
-          class="q-mt-md"
-          @click="obrisi"
-          :disable="!odabraniRedak"
-        />
-      </div>
-    </q-form>
+        <div class="row q-gutter-x-md">
+          <q-btn
+            push
+            type="submit"
+            label="Spremi"
+            color="primary"
+            class="q-mt-md"
+            :disable="!validacija()"
+          />
+          <q-btn
+            push
+            label="Ažuriraj"
+            color="secondary"
+            class="q-mt-md"
+            @click="azuriraj"
+            :disable="!odabraniRedak"
+          />
+          <q-btn
+            push
+            label="Obriši"
+            color="secondary"
+            class="q-mt-md"
+            @click="obrisi"
+            :disable="!odabraniRedak"
+          />
+        </div>
+      </q-form>
+    </q-card>
 
-    <q-separator class="q-my-md" />
+    <div class="flex justify-center">
+      <q-separator
+        class="q-my-lg"
+        style="width: 90%; height: 3px; border-radius: 100px; margin: 5%"
+      />
+    </div>
 
     <q-btn
       push
@@ -71,6 +83,7 @@
       color="primary"
       @click="prikaziTablicu"
       id="prikaziTablicuBtn"
+      style="margin: 0 10%; margin-bottom: 3%"
     />
 
     <q-table
@@ -80,7 +93,8 @@
       row-key="IdDjelatnika"
       v-show="prikaz"
       @row-click="odaberiRedak"
-      style="width: 85%; margin: 20px auto"
+      style="width: 85%; margin: 20px auto; border-radius: 15px"
+      class="shadow-3"
     />
 
     <q-btn
@@ -89,6 +103,7 @@
       @click="ucitajTablicu"
       label="Osvježi"
       color="primary"
+      style="margin: 2% 10%"
     />
   </q-page>
 </template>

@@ -1,101 +1,115 @@
 <template>
   <q-page class="q-pa-md">
-    <h4>Dodaj novog kupca</h4>
-    <q-form ref="formRef" @submit.prevent="spremi">
-      <div class="q-gutter-md">
-        <q-input
-          filled
-          v-model="noviKupac.oib"
-          style="width: 30%"
-          label="OIB kupca"
-          type="text"
-          :rules="[(val) => val.length === 11 || 'OIB mora imati 11 znamenki']"
-        />
-        <q-input
-          filled
-          v-model="imeFormatted"
-          style="width: 30%"
-          label="Ime kupca"
-          type="text"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="prezimeFormatted"
-          style="width: 30%"
-          label="Prezime kupca"
-          filled
-          type="text"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="noviKupac.adresa"
-          style="width: 30%"
-          label="Adresa kupca"
-          filled
-          type="text"
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-        <q-input
-          v-model="noviKupac.email"
-          style="width: 30%"
-          label="Email kupca"
-          filled
-          type="email"
-          :rules="[(val) => /.+@.+\..+/.test(val) || 'Unesite ispravan email']"
-        />
-        <q-input
-          v-model="noviKupac.brojTelefona"
-          style="width: 30%"
-          label="Broj telefona"
-          filled
-          type="text"
-          :rules="[
-            (val) => /^\d{9,10}$/.test(val) || 'Unesite ispravan broj telefona',
-          ]"
-        />
-        <q-select
-          v-model="noviKupac.tipKupca"
-          style="width: 30%"
-          label="Tip
-        kupca"
-          filled
-          :options="tipoviKupca"
-          emit-value
-          map-options
-          :rules="[(val) => !!val || 'Odaberite tip kupca']"
-          @update:model-value="logTipPodatka"
-        />
-      </div>
+    <h4 style="margin: 2% 10%">Dodaj novog kupca</h4>
+    <q-card
+      class="q-pa-lg shadow-3"
+      style="
+        width: 50%;
+        max-width: 90%;
+        border-radius: 15px;
+        margin: 0 10%;
+        background-color: #dedede;
+      "
+    >
+      <q-form ref="formRef" @submit.prevent="spremi" style="padding: 5%">
+        <div class="q-gutter-md">
+          <q-input
+            outlined
+            v-model="noviKupac.oib"
+            label="OIB kupca"
+            type="text"
+            :rules="[
+              (val) => val.length === 11 || 'OIB mora imati 11 znamenki',
+            ]"
+          />
+          <q-input
+            outlined
+            v-model="imeFormatted"
+            label="Ime kupca"
+            type="text"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-input
+            v-model="prezimeFormatted"
+            label="Prezime kupca"
+            outlined
+            type="text"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-input
+            v-model="noviKupac.adresa"
+            label="Adresa kupca"
+            outlined
+            type="text"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+          <q-input
+            v-model="noviKupac.email"
+            label="Email kupca"
+            outlined
+            type="email"
+            :rules="[
+              (val) => /.+@.+\..+/.test(val) || 'Unesite ispravan email',
+            ]"
+          />
+          <q-input
+            v-model="noviKupac.brojTelefona"
+            label="Broj telefona"
+            outlined
+            type="text"
+            :rules="[
+              (val) =>
+                /^\d{9,10}$/.test(val) || 'Unesite ispravan broj telefona',
+            ]"
+          />
+          <q-select
+            v-model="noviKupac.tipKupca"
+            label="Tip
+          kupca"
+            outlined
+            :options="tipoviKupca"
+            emit-value
+            map-options
+            :rules="[(val) => !!val || 'Odaberite tip kupca']"
+            @update:model-value="logTipPodatka"
+          />
+        </div>
 
-      <div class="row q-gutter-x-md">
-        <q-btn
-          push
-          type="submit"
-          label="Spremi"
-          color="primary"
-          class="q-mt-md"
-          :disable="!validacija()"
-        />
-        <q-btn
-          push
-          label="Ažuriraj"
-          color="secondary"
-          class="q-mt-md"
-          @click="azuriraj"
-          :disable="!odabraniRedak"
-        />
-        <q-btn
-          push
-          label="Obriši"
-          color="secondary"
-          class="q-mt-md"
-          @click="obrisi"
-          :disable="!odabraniRedak"
-        />
-      </div>
-    </q-form>
+        <div class="row q-gutter-x-md">
+          <q-btn
+            push
+            type="submit"
+            label="Spremi"
+            color="primary"
+            class="q-mt-md"
+            :disable="!validacija()"
+          />
+          <q-btn
+            push
+            label="Ažuriraj"
+            color="secondary"
+            class="q-mt-md"
+            @click="azuriraj"
+            :disable="!odabraniRedak"
+          />
+          <q-btn
+            push
+            label="Obriši"
+            color="secondary"
+            class="q-mt-md"
+            @click="obrisi"
+            :disable="!odabraniRedak"
+          />
+        </div>
+      </q-form>
+    </q-card>
 
-    <q-separator class="q-my-md" />
+    <div class="flex justify-center">
+      <q-separator
+        class="q-my-lg"
+        style="width: 90%; height: 3px; border-radius: 100px; margin: 5%"
+      />
+    </div>
 
     <q-btn
       push
@@ -104,6 +118,7 @@
       color="primary"
       @click="prikaziTablicu"
       id="prikaziTablicuBtn"
+      style="margin: 0 10%; margin-bottom: 3%"
     />
 
     <q-table
@@ -113,7 +128,8 @@
       row-key="IdKupca"
       v-show="prikaz"
       @row-click="odaberiRedak"
-      style="width: 85%; margin: 20px auto"
+      style="width: 85%; margin: 20px auto; border-radius: 15px"
+      class="shadow-3"
     />
 
     <q-btn
@@ -122,6 +138,7 @@
       @click="ucitajTablicu"
       label="Osvježi"
       color="primary"
+      style="margin: 2% 10%"
     />
   </q-page>
 </template>

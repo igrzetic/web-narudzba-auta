@@ -1,86 +1,99 @@
 <template>
   <q-page class="q-pa-md">
-    <h4>Dodaj novo vozilo</h4>
-    <q-form ref="formRef" @submit.prevent="spremi">
-      <div class="q-gutter-md">
-        <q-input
-          v-model="novoVozilo.brojSasije"
-          style="width: 30%"
-          label="Broj šasije"
-          filled
-          :rules="[
-            (val) => !!val || 'Ovo polje je obavezno',
-            (val) => val.length === 17 || 'Broj šasije mora imati 17 znamenki',
-          ]"
-        />
-        <q-select
-          v-model="selectedMarka"
-          style="width: 30%"
-          label="Marka vozila"
-          filled
-          emit-value
-          map-options
-          :options="
-            markaVozila.map((marka) => ({
-              label: marka.label,
-              value: marka.value,
-            }))
-          "
-          :rules="[(val) => !!val || 'Odaberite marku vozila']"
-          @update:model-value="filterModelZaMarku"
-        />
-        <q-select
-          v-model="selectedModel"
-          style="width: 30%"
-          label="Model vozila"
-          filled
-          emit-value
-          map-options
-          :options="modeliZaOdabranuMarku"
-          :rules="[(val) => !!val || 'Odaberite model vozila']"
-          :disable="!selectedMarka"
-        />
-        <q-input
-          v-model="novoVozilo.cijena"
-          style="width: 30%"
-          label="Cijena"
-          type="number"
-          step="0.001"
-          @blur="formatCijena"
-          filled
-          :rules="[(val) => !!val || 'Ovo polje je obavezno']"
-        />
-      </div>
+    <h4 style="margin: 2% 10%">Dodaj novo vozilo</h4>
+    <q-card
+      class="q-pa-lg shadow-3"
+      style="
+        width: 50%;
+        max-width: 90%;
+        border-radius: 15px;
+        margin: 0 10%;
+        background-color: #dedede;
+      "
+    >
+      <q-form ref="formRef" @submit.prevent="spremi" style="padding: 5%">
+        <div class="q-gutter-md">
+          <q-input
+            v-model="novoVozilo.brojSasije"
+            label="Broj šasije"
+            outlined
+            :rules="[
+              (val) => !!val || 'Ovo polje je obavezno',
+              (val) =>
+                val.length === 17 || 'Broj šasije mora imati 17 znamenki',
+            ]"
+          />
+          <q-select
+            v-model="selectedMarka"
+            label="Marka vozila"
+            outlined
+            emit-value
+            map-options
+            :options="
+              markaVozila.map((marka) => ({
+                label: marka.label,
+                value: marka.value,
+              }))
+            "
+            :rules="[(val) => !!val || 'Odaberite marku vozila']"
+            @update:model-value="filterModelZaMarku"
+          />
+          <q-select
+            v-model="selectedModel"
+            label="Model vozila"
+            outlined
+            emit-value
+            map-options
+            :options="modeliZaOdabranuMarku"
+            :rules="[(val) => !!val || 'Odaberite model vozila']"
+            :disable="!selectedMarka"
+          />
+          <q-input
+            v-model="novoVozilo.cijena"
+            outlined
+            label="Cijena"
+            type="number"
+            step="0.001"
+            @blur="formatCijena"
+            :rules="[(val) => !!val || 'Ovo polje je obavezno']"
+          />
+        </div>
 
-      <div class="row q-gutter-x-md">
-        <q-btn
-          push
-          type="submit"
-          label="Spremi"
-          color="primary"
-          class="q-mt-md"
-          :disable="!validacija()"
-        />
-        <q-btn
-          push
-          label="Ažuriraj"
-          color="secondary"
-          class="q-mt-md"
-          @click="azuriraj"
-          :disable="!odabraniRedak"
-        />
-        <q-btn
-          push
-          label="Obriši"
-          color="secondary"
-          class="q-mt-md"
-          @click="obrisi"
-          :disable="!odabraniRedak"
-        />
-      </div>
-    </q-form>
+        <div class="row q-gutter-x-md">
+          <q-btn
+            push
+            type="submit"
+            label="Spremi"
+            color="primary"
+            class="q-mt-md"
+            :disable="!validacija()"
+          />
+          <q-btn
+            push
+            label="Ažuriraj"
+            color="secondary"
+            class="q-mt-md"
+            @click="azuriraj"
+            :disable="!odabraniRedak"
+          />
+          <q-btn
+            push
+            label="Obriši"
+            color="secondary"
+            class="q-mt-md"
+            @click="obrisi"
+            :disable="!odabraniRedak"
+          />
+        </div>
+      </q-form>
+    </q-card>
 
-    <q-separator class="q-my-md" />
+    <div class="flex justify-center">
+      <q-separator
+        class="q-my-lg"
+        style="width: 90%; height: 3px; border-radius: 100px; margin: 5%"
+      />
+    </div>
 
     <q-btn
       push
@@ -89,6 +102,7 @@
       color="primary"
       @click="prikaziTablicu"
       id="prikaziTablicuBtn"
+      style="margin: 0 10%; margin-bottom: 3%"
     />
 
     <q-table
@@ -98,7 +112,8 @@
       row-key="BrojSasije"
       v-show="prikaz"
       @row-click="odaberiRedak"
-      style="width: 85%; margin: 20px auto"
+      style="width: 85%; margin: 20px auto; border-radius: 15px"
+      class="shadow-3"
     />
 
     <q-btn
@@ -107,6 +122,7 @@
       @click="ucitajTablicu"
       label="Osvježi"
       color="primary"
+      style="margin: 2% 10%"
     />
   </q-page>
 </template>
