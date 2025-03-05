@@ -49,12 +49,14 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 
 const korisnickoIme = ref("");
 const lozinka = ref("");
 const errorMessages = ref("");
 const isLoading = ref(false);
+const router = useRouter();
 
 // Funkcija za prijavu korisnika
 const login = async () => {
@@ -73,11 +75,15 @@ const login = async () => {
         djelatnik.lozinka === lozinka.value
     );
 
-    // Ako korisnik postoji, ispišemo korisničko ime i lozinku u konzolu
+    // Ako korisnik postoji, preusmjeravamo ga na narudzbaPage
     if (korisnik) {
-      console.log("Korisnik postoji u bazi:");
-      console.log("Korisničko ime: ", korisnik.korisnickoIme);
-      console.log("Lozinka: ", korisnik.lozinka);
+      console.log("Korisnik postoji u bazi:", korisnik);
+
+      // Spremi korisnika u localStorage
+      localStorage.setItem("user", JSON.stringify(korisnik));
+
+      // Preusmjeri korisnika na narudzbaPage
+      router.push("narudzbe");
     } else {
       console.log("Korisnik ne postoji u bazi");
       errorMessages.value = "Neispravno korisničko ime ili lozinka!";

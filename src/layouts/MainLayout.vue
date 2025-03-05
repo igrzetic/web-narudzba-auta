@@ -5,6 +5,7 @@
       <q-toolbar>
         <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
         <q-toolbar-title>Web narudžba auta</q-toolbar-title>
+        <q-btn color="red" label="Odjava" @click="logout" push />
       </q-toolbar>
     </q-header>
 
@@ -75,12 +76,14 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 const drawer = ref(false);
 const miniState = ref(true);
-const userRole = ref("");
+const router = useRouter();
 
-onMounted(() => {
-  userRole.value = localStorage.getItem("userRole");
-});
+const logout = () => {
+  localStorage.removeItem("user");
+  router.push("/login");
+};
 </script>
